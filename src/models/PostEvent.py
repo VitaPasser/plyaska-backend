@@ -2,14 +2,14 @@ import datetime
 from typing import List, Literal, Tuple, Optional, Annotated
 
 import pymongo
-from beanie import Document, Indexed
+from beanie import Document, Indexed, Link
 from pydantic import BaseModel, EmailStr, Field
 
 from src.models.Promotion import Promotion
 
 
 class PromotionDeal(BaseModel):
-    promotion_type: Promotion
+    promotion_type: Link[Promotion]
     start_datetime: datetime.datetime = Field(default_factory=datetime.datetime.now)
     end_datetime: datetime.datetime
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)

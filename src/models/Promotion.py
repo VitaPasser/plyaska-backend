@@ -1,18 +1,17 @@
 import decimal
-from typing import Annotated, Optional, Literal
+from typing import Annotated, Optional
 
-from beanie import Document
+from beanie import Document, DecimalAnnotation
 from pydantic import BaseModel, Field
 
 
 class Money(BaseModel):
-    amount: decimal.Decimal
+    amount: DecimalAnnotation
     currency: Annotated[str, Field(max_length=3, min_length=3)]  # USD, EUR, RUB
 
 class Promotion(Document):
     name: str
     description: Optional[str] = None
-    power: Annotated[decimal.Decimal, Field(ge=0)]
-    price_per: Literal["second","minute","hour","day","week","month","year"] = "hour"
-    duration: Annotated[decimal.Decimal, Field(ge=0)]
+    power: Annotated[DecimalAnnotation, Field(ge=0)]
+    duration: Annotated[int, Field(ge=0)] #In seconds
     price: Money

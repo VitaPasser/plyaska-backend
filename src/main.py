@@ -1,7 +1,6 @@
 import asyncio
 import os
-import subprocess
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from beanie import init_beanie
@@ -23,18 +22,25 @@ def get_mongo_url():
 async def example():
     try:
         client = AsyncMongoClient(get_mongo_url())
-        await init_beanie(database=client.plyaska_db, document_models=[PostEvent])
+        await init_beanie(database=client.plyaska_db, document_models=[PostEvent, Promotion])
         await PostEvent.delete_all()
+        await Promotion.delete_all()
+        now = datetime.now()
 
-        promotion = Promotion(name="Super Sale", description="50% off for first month", price_per="month",
-                              power=Decimal(20), duration=Decimal(1),
-                              price=Money(amount=Decimal(9.99), currency="USD"))
+        print("MongoDB connected successfully")
+        promotion = Promotion(name="Super Sale", description="50% off for first month",
+                              power=Decimal("20000000"),
+                              duration=int(timedelta(days=30).total_seconds()),
+                              price=Money(amount=Decimal("9.99"), currency="USD"))
+        print(f"Promotion before insert: {promotion}")
         await promotion.insert()
         promotion = await Promotion.find_one(Promotion.name == "Super Sale")
         print(promotion)
 
-        end_datetime = datetime.now() + relativedelta(**{f"{promotion.price_per}s": promotion.duration})
-        promotion_deal = PromotionDeal(promotion_type=promotion, end_datetime=end_datetime)
+        end_datetime = now - relativedelta(seconds=promotion.duration)
+        start_datetime = end_datetime - relativedelta(seconds=promotion.duration)
+        promotion_deal = PromotionDeal(promotion_type=promotion, start_datetime=start_datetime,
+                                       end_datetime=end_datetime)
 
         author = User(username="user1", email="user1@gmail.com", full_name="User One")
         image1 = Image(url="http://example.com/image1.jpg", description="An example image")
@@ -68,35 +74,30 @@ async def example():
 
         post_event_searched = await PostEvent.aggregate(
             [
-                Near(PostEvent.location,
-                     50.6173,
-                     58.7558,
-                     max_distance=800000),
+                {
+                    "$geoNear": {
+                        "near": {"type": "Point", "coordinates": [50.6173, 58.7558]},
+                        "distanceField": "distance",
+                        "maxDistance": 8000000,  # in meters
+                        "spherical": True
+                    }
+                },
                 {"$unwind": {"path": "$promotions", "preserveNullAndEmptyArrays": True}},
-                {"$lookup": {
-                    "from": "promotion",  # имя коллекции Promotion
-                    "localField": "promotions.promotion_type.$id",
-                    "foreignField": "_id",
-                    "as": "promo_info"
-                }},
-                {"$unwind": {"path": "$promo_info", "preserveNullAndEmptyArrays": True}},
                 {"$addFields": {
                     "score": {
                         "$cond": [
-                            {"$gt": ["$promo_info.power", 0]},
-                            {"$divide": ["$distance", "$promo_info.power"]},
-                            "$distance"  # если duration нет — просто расстояние
+                            {"$and": [
+                                {"$gt": ["$promotions.promotion_type.power", 0]},
+                                {"$gt": ["$promotions.end_datetime", now]},
+                                {"$lte": ["$promotions.start_datetime", now]},
+                            ]},
+                            {"$divide": ["$distance", "$promotions.promotion_type.power"]},
+                            "$distance"
                         ]
                     }
                 }},
-                # оставляем лучший вариант по каждому PostEvent
-                {"$group": {
-                    "_id": "$_id",
-                    "doc": {"$first": "$$ROOT"},
-                    "best_score": {"$min": "$score"}
-                }},
-                {"$sort": SON([("best_score", 1)])},
-                {"$limit": 1}
+                {"$sort": SON([("score", 1)])},
+                {"$limit": 10000}
             ]
         ).to_list()
         print(f"Post event searched by geometry and after update: {post_event_searched}")
@@ -112,13 +113,13 @@ def main():
         print(f"MongoDB URL: {get_mongo_url()}")
         db = client["plyaska_db"]
         print(f"DB name: {db.name}")
-        db.post_events.insert_one(
+        db.post_event.insert_one(
             {"name": "В ПОДВАЛЕ ПОЛИТЕХА ДЕРЖАТ НАС! ПОМОГИТЕ!", "description": "ПОМОГИТЕ!", "date": "2024-06-01",
              "author": "Девочка1 из подвала"})
-        db.post_events.insert_one(
+        db.post_event.insert_one(
             {"name": "В ПОДВАЛЕ ПОЛИТЕХА ДЕРЖАТ НАС2! ПОМОГИТЕ!", "description": "ПОМОГИТЕ!", "date": "2024-06-02",
              "author": "Девочка2 из подвала"})
-        db.post_events.insert_one(
+        db.post_event.insert_one(
             {"name": "В ПОДВАЛЕ ПОЛИТЕХА ДЕРЖАТ НАС3! ПОМОГИТЕ!", "description": "ПОМОГИТЕ!", "date": "2024-06-03",
              "author": "Девочка2 из подвала"})
         post_event = db.post_events.find_one({"author": "Девочка1 из подвала"})
