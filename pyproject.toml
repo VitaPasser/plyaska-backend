@@ -4,4 +4,14 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "beanie>=2.0.0",
+    "pydantic[email]>=2.11.9",
+    "pymongo>=4.15.1",
+    "python-dateutil>=2.9.0.post0",
+]
+
+[tool.uv.workspace]
+members = [
+    "test",
+]
