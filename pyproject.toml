@@ -1,11 +1,15 @@
 [project]
 name = "plyaska-backend"
 version = "0.1.0"
-description = "Add your description here"
+description = "Plyaska is a backend service for searching nearby dance groups and events. It provides a RESTful API for clients to interact with the service."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "beanie>=2.0.0",
+    "camelsnake>=0.0.2",
+    "debugpy>=1.8.17",
+    "fastapi[all,standard]>=0.116.2",
+    "inflect>=7.5.0",
     "pydantic[email]>=2.11.9",
     "pymongo>=4.15.1",
     "python-dateutil>=2.9.0.post0",

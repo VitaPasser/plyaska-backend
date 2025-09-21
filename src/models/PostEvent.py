@@ -2,10 +2,12 @@ import datetime
 from typing import List, Literal, Tuple, Optional, Annotated
 
 import pymongo
-from beanie import Document, Indexed, Link
-from pydantic import BaseModel, EmailStr, Field
+from beanie import Indexed, Link
+from pydantic import BaseModel, Field
 
 from src.models.Promotion import Promotion
+from src.models.User import User
+from src.utils.models.BaseDocument import BaseDocument
 
 
 class PromotionDeal(BaseModel):
@@ -15,24 +17,21 @@ class PromotionDeal(BaseModel):
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
     update_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
 
-class User(BaseModel):
-    username: str
-    email: EmailStr
-    full_name: str = None
-    disabled: bool = False
 
 class Image(BaseModel):
     url: str
     description: str = None
 
+
 class Location(BaseModel):
     type: Literal["Point"] = "Point"
     coordinates: Tuple[float, float] = None  # (longitude, latitude)
 
-class PostEvent(Document):
+
+class PostEvent(BaseDocument):
     name: str
     description: Optional[str] = None
-    author: User
+    author: Link[User]
     images: List[Image]
     location: Annotated[Location, Indexed(index_type=pymongo.GEOSPHERE)]
     date: datetime.datetime = Field(default_factory=datetime.datetime.now)
