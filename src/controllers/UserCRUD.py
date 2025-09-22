@@ -1,17 +1,15 @@
-import logging
 from typing import List
 
 from fastapi import HTTPException
 
 from src.models.User import User
-from src.utils.controllers.AutoCRUD import CRUDRouter
+from src.utils.controllers.CrudRouter import CRUDRouter
 
 crud_router = CRUDRouter[User, User, User](
     model=User,
     exclude=[CRUDRouter.find_all.__name__]
 )
-logging.debug(crud_router.create.__annotations__)
-logging.debug(crud_router.router.routes)
+
 router = crud_router.router
 
 

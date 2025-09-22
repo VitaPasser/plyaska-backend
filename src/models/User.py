@@ -4,7 +4,7 @@ from src.utils.models.BaseDocument import BaseDocument
 from src.utils.models.BaseModelBeforeDocument import BaseModelBeforeDocument
 
 
-class UserModel(BaseModelBeforeDocument, BaseDocument):
+class UserModel(BaseModelBeforeDocument):
     username: str
     email: EmailStr
     full_name: str = None
