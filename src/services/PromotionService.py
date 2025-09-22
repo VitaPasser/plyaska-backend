@@ -1,12 +1,11 @@
-from datetime import timedelta, datetime
-from decimal import Decimal
+from datetime import datetime
 
 from beanie import PydanticObjectId
 from dateutil.relativedelta import relativedelta
 from fastapi import HTTPException
 
 from src.models.PostEvent import PromotionDeal
-from src.models.Promotion import Promotion, Money
+from src.models.Promotion import Promotion
 
 
 async def create_deal(promotion: Promotion):
@@ -18,20 +17,8 @@ async def create_deal(promotion: Promotion):
     return promotion_deal
 
 
-async def create():
-    promotion = Promotion(name="Super Sale", description="50% off for first month",
-                          power=Decimal("20000000"),
-                          duration=int(timedelta(days=30).total_seconds()),
-                          price=Money(amount=Decimal("9.99"), currency="USD"))
-    return await promotion.insert()
-
-
 async def find_by_id(promotion_id: PydanticObjectId):
     promotion = await Promotion.get(promotion_id)
     if promotion is None:
         raise HTTPException(status_code=404, detail="Not found")
     return promotion
-
-
-async def find_all():
-    return await Promotion.find_all().to_list()

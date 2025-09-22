@@ -13,6 +13,8 @@ dependencies = [
     "pydantic[email]>=2.11.9",
     "pymongo>=4.15.1",
     "python-dateutil>=2.9.0.post0",
+    "rust-just>=1.42.4",
+    "typer>=0.17.4",
 ]
 
 [tool.uv.workspace]
