@@ -1,13 +1,7 @@
-import logging
-from abc import abstractmethod
-
-from src.utils.BaseProvider import BaseProvider
+from abc import abstractmethod, ABC
 
 
-class DBProvider(BaseProvider):
-    def __init__(self):
-        super().__init__(logging.getLogger(__name__))
-
+class DBProvider(ABC):
     @abstractmethod
     def connect(self):
         raise NotImplementedError("Subclasses must implement this method")

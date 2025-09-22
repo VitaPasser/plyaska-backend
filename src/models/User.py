@@ -1,10 +1,10 @@
 from pydantic import EmailStr
 
 from src.utils.models.BaseDocument import BaseDocument
-from src.utils.models.BaseModelBeforeDocument import BaseModelBeforeDocument
+from src.utils.models.BaseModelFutureDocument import BaseModelFutureDocument
 
 
-class UserModel(BaseModelBeforeDocument):
+class UserModel(BaseModelFutureDocument):
     username: str
     email: EmailStr
     full_name: str = None

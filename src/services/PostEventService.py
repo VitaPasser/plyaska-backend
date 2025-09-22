@@ -25,23 +25,3 @@ async def add_promotion(post_event_id: str, promotion_id: str):
     promotion_deal = await PromotionService.create_deal(promotion)
     post_event.promotions.append(promotion_deal)
     return await post_event.save(link_rule=WriteRules.DO_NOTHING)
-
-# async def create_post_event(author: User,
-#                             promotion_deal: PromotionDeal | None = None):
-#     image1 = Image(url="http://example.com/image1.jpg",
-#                    description="An example image")
-#     image2 = Image(url="http://example.com/image2.jpg",
-#                    description="An example image two")
-#     location = Location(coordinates=(37.6173, 55.7558))
-#     promotions = []
-#     if promotion_deal:
-#         promotions = [promotion_deal]
-#     post_event = PostEvent(
-#         name="Sample Event",
-#         description="This is a sample event description.",
-#         author=author,
-#         images=[image1, image2],
-#         location=location,
-#         promotions=promotions
-#     )
-#     return await post_event.save(link_rule=WriteRules.DO_NOTHING)

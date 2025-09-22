@@ -4,7 +4,7 @@ from beanie import DecimalAnnotation
 from pydantic import BaseModel, Field
 
 from src.utils.models.BaseDocument import BaseDocument
-from src.utils.models.BaseModelBeforeDocument import BaseModelBeforeDocument
+from src.utils.models.BaseModelFutureDocument import BaseModelFutureDocument
 
 
 class Money(BaseModel):
@@ -12,7 +12,7 @@ class Money(BaseModel):
     currency: Annotated[str, Field(max_length=3, min_length=3)]  # USD, EUR, RUB
 
 
-class PromotionModel(BaseModelBeforeDocument):
+class PromotionModel(BaseModelFutureDocument):
     name: str
     description: Optional[str] = None
     power: Annotated[DecimalAnnotation, Field(ge=0)]

@@ -1,3 +1,4 @@
+import logging
 from beanie import init_beanie
 from pymongo import AsyncMongoClient
 
@@ -26,14 +27,14 @@ class MongoDBProvider(DBProvider):
     async def connect(self):
         if not self.__client:
             self.__client = AsyncMongoClient(self.__get_url())
-            self._logger.info("Connected to MongoDB")
+            logging.info("Connected to MongoDB")
         if not self.__is_initialized:
             loaded_documents = _load_documents()
-            self._logger.debug(f"Loaded documents: {loaded_documents}")
+            logging.debug(f"Loaded documents: {loaded_documents}")
             await init_beanie(database=self.__client.plyaska_db,
                               document_models=loaded_documents)
             self.__is_initialized = True
-            self._logger.info("DB is initialized with Beanie")
+            logging.info("DB is initialized with Beanie")
 
         return self.__client
 
@@ -43,10 +44,10 @@ class MongoDBProvider(DBProvider):
     async def disconnect(self):
         if not self.__client:
             self.__is_initialized = False
-            self._logger.info("DB was been disconnected")
+            logging.info("DB was been disconnected")
             return
         await self.__client.close()
         self.__client = None
         self.__is_initialized = False
-        self._logger.info("DB is disconnected")
+        logging.info("DB is disconnected")
 

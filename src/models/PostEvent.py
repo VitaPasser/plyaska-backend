@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from src.models.Promotion import Promotion
 from src.models.User import User
 from src.utils.models.BaseDocument import BaseDocument
-from src.utils.models.BaseModelBeforeDocument import BaseModelBeforeDocument
+from src.utils.models.BaseModelFutureDocument import BaseModelFutureDocument
 
 
 class PromotionDeal(BaseModel):
@@ -29,7 +29,7 @@ class Location(BaseModel):
     coordinates: Tuple[float, float]  # (longitude, latitude)
 
 
-class PostEventModel(BaseModelBeforeDocument):
+class PostEventModel(BaseModelFutureDocument):
     name: str
     description: Optional[str] = None
     author: Link[User]
