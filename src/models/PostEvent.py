@@ -1,15 +1,14 @@
 import datetime
-import logging
-import pprint
 from typing import List, Literal, Tuple, Optional, Annotated
 
 import pymongo
-from beanie import Indexed, Link
-from pydantic import BaseModel, Field, create_model
+from beanie import Indexed, Link, DecimalAnnotation
+from pydantic import BaseModel, Field
 
 from src.models.Promotion import Promotion
 from src.models.User import User
 from src.utils.models.BaseDocument import BaseDocument
+from src.utils.models.BaseModelBeforeDocument import BaseModelBeforeDocument
 
 
 class PromotionDeal(BaseModel):
@@ -30,7 +29,7 @@ class Location(BaseModel):
     coordinates: Tuple[float, float]  # (longitude, latitude)
 
 
-class PostEvent(BaseDocument):
+class PostEventModel(BaseModelBeforeDocument):
     name: str
     description: Optional[str] = None
     author: Link[User]
@@ -38,10 +37,11 @@ class PostEvent(BaseDocument):
     location: Annotated[Location, Indexed(index_type=pymongo.GEOSPHERE)]
     promotions: List[PromotionDeal] = Field(default_factory=list)
 
-#
-# post_event_dump = PostEvent.model_json_schema(mode='serialization')
-# logging.debug(pprint.pformat(post_event_dump))
-# PostEventSchema = create_model(f"{PostEvent.__name__}Schema", **post_event_dump)
 
-class PostEventNear(PostEvent):
-    score: float
+class PostEvent(PostEventModel, BaseDocument):
+    pass
+
+
+class PostEventNear(PostEventModel):
+    score: DecimalAnnotation
+    active_promotions: List[PromotionDeal]

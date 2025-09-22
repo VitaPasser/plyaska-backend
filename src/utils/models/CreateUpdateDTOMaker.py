@@ -1,3 +1,4 @@
+import logging
 from typing import Any, get_args, get_origin
 
 from beanie import Document, Link
@@ -53,6 +54,8 @@ def make_input_schema(
     visited = _visited or set()
     exclude_fields = exclude_fields or {"id", "revision_id", "_id", "created_at", "updated_at"}
     fields: dict[str, tuple[Any, Any]] = {}
+
+    logging.debug(f"fields={model.model_fields}, items={model.model_fields.items()}")
 
     for fname, f in model.model_fields.items():
         if fname in exclude_fields:
