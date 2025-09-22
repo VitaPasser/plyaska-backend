@@ -1,11 +1,8 @@
-from src.utils.controller.BaseController import BaseController
-from src.utils.controller.RoutesUtils import get
+from fastapi import APIRouter
+
+router = APIRouter()
 
 
-class Home(BaseController):
-    def __init__(self):
-        super().__init__()
-
-    @get("/")
-    def root(self):
-        return {"message": "Hello World"}
+@router.get("/")
+def root():
+    return {"message": "Hello World"}

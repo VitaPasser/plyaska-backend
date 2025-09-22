@@ -1,21 +1,21 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
 
-from src.exceptionHandlers import ExceptionHandlers
-from src.providers import provider_register
+from src.utils.handlers.exceptionHandlers import ExceptionHandlers
 from src.utils.Logging import logging_setup
+from src.utils.controllers.ControllersLoader import load_fastapi_routers
 from src.utils.db.MongoDBProvider import MongoDBProvider
 
 
 class Main:
     def __init__(self):
-        self._logger = logging_setup()
-        self._logger.info("Starting main initialization...")
-        self._db = MongoDBProvider(self._logger,
-                                   database="plyaska_db",
+        logging_setup()
+        logging.info("Starting main initialization...")
+        self._db = MongoDBProvider(database="plyaska_db",
                                    username=os.getenv("MONGO_USERNAME"),
                                    password=os.getenv("MONGO_PASSWORD"),
                                    host=os.getenv("MONGO_HOST"), )
@@ -25,19 +25,18 @@ class Main:
             await self.setup()
             yield
             await self.teardown()
-
         self.app = FastAPI(lifespan=lifespan)
-        eh = ExceptionHandlers(self._logger)
+        eh = ExceptionHandlers()
         self.app.add_exception_handler(Exception, eh.unhandled_exception_handler)
         self.app.add_exception_handler(HTTPException, eh.http_exception_handler)
-        self._logger.info("Main initialized")
+        logging.info("Main initialized")
 
     async def setup(self):
         await self._db.connect()
-        self._logger.info("Loading providers...")
-        for provider in provider_register(self._logger, self._db):
-            self.app.include_router(provider.router)
-        self._logger.info("Providers loaded")
+        logging.info("Loading routers...")
+        for router in load_fastapi_routers('src.controllers'):
+            self.app.include_router(router)
+        logging.info("Routers loaded")
         return self
 
     async def teardown(self):

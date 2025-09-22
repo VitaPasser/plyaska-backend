@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, TypeVar, Type
 
 from beanie import Document, PydanticObjectId
@@ -21,6 +22,8 @@ def auto_collection(cls: T) -> T:
 
 class BaseDocument(Document):
     id: Optional[PydanticObjectId] = Field(default=None, alias="_id")
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

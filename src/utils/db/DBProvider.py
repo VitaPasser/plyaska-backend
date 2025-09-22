@@ -1,11 +1,12 @@
+import logging
 from abc import abstractmethod
 
 from src.utils.BaseProvider import BaseProvider
 
 
 class DBProvider(BaseProvider):
-    def __init__(self, logger):
-        super().__init__(logger)
+    def __init__(self):
+        super().__init__(logging.getLogger(__name__))
 
     @abstractmethod
     def connect(self):

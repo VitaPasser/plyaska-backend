@@ -10,8 +10,6 @@ def logging_setup():
 
     logging.basicConfig(
         filename=os.path.join(log_dir, f'internal.log'),
-        level=logging.INFO,
+        level=logging.DEBUG,
         format="%(name)s %(asctime)s %(levelname)s %(message)s"
     )
-
-    return logging.getLogger(__name__)

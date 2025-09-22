@@ -2,7 +2,7 @@ from beanie import init_beanie
 from pymongo import AsyncMongoClient
 
 from src.utils.db.DBProvider import DBProvider
-from src.utils.db.ModelsLoader import load_beanie_models
+from src.utils.models.ModelsLoader import load_beanie_models
 
 
 def _load_documents():
@@ -13,12 +13,12 @@ class MongoDBProvider(DBProvider):
     __is_initialized: bool = False
     __client: AsyncMongoClient|None = None
 
-    def __init__(self, logger, database: str, username: str, password: str, host: str):
+    def __init__(self, database: str, username: str, password: str, host: str):
         self.username = username
         self.password = password
         self.host = host
         self.db = database
-        super().__init__(logger)
+        super().__init__()
 
     def __get_url(self) -> str:
         return f"mongodb://{self.username}:{self.password}@{self.host}:27017"
@@ -28,8 +28,10 @@ class MongoDBProvider(DBProvider):
             self.__client = AsyncMongoClient(self.__get_url())
             self._logger.info("Connected to MongoDB")
         if not self.__is_initialized:
+            loaded_documents = _load_documents()
+            self._logger.debug(f"Loaded documents: {loaded_documents}")
             await init_beanie(database=self.__client.plyaska_db,
-                              document_models=_load_documents())
+                              document_models=loaded_documents)
             self.__is_initialized = True
             self._logger.info("DB is initialized with Beanie")
 
