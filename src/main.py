@@ -1,8 +1,10 @@
 import logging
 import os
+import posixpath
 from contextlib import asynccontextmanager
 
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 
 from src.utils.handlers.exceptionHandlers import ExceptionHandlers
@@ -10,6 +12,7 @@ from src.utils.Logging import logging_setup
 from src.utils.controllers.ControllersLoader import load_fastapi_routers
 from src.utils.db.MongoDBProvider import MongoDBProvider
 
+load_dotenv(f"{posixpath.dirname(__file__)}/../.env")
 
 class Main:
     def __init__(self):
@@ -48,6 +51,6 @@ main = Main()
 
 if __name__ == "__main__":
     uvicorn.run("src.main:main.app",
-                host=(os.getenv("SERVER_INTERNAL_HOST")),
-                port=(int(os.getenv("SERVER_INTERNAL_PORT"))),
+                host=(os.getenv("SERVER_INTERNAL_HOST") or "0.0.0.0"),
+                port=(int(os.getenv("SERVER_INTERNAL_PORT") or 8000)),
                 reload=True)

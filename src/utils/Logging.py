@@ -4,7 +4,10 @@ from datetime import date
 
 
 def logging_setup():
-    log_dir = f"/app/logs/{date.today()}"  # Path inside the container
+    log_dir = os.getenv("LOGGING_DIR_PATH")
+    if len(log_dir) > 0 and log_dir[-1] == '/':
+        log_dir = log_dir[:-1]
+    log_dir = f"{log_dir}/{date.today()}"
     # Create a 'logs' directory if it doesn't exist
     os.makedirs(log_dir, exist_ok=True)
 

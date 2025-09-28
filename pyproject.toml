@@ -5,14 +5,20 @@ description = "Plyaska is a backend service for searching nearby dance groups an
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "asgi-lifespan>=2.1.0",
     "beanie>=2.0.0",
     "camelsnake>=0.0.2",
     "debugpy>=1.8.17",
     "fastapi[all,standard]>=0.116.2",
+    "httpsx>=0.0.1",
     "inflect>=7.5.0",
+    "mypy>=1.11",
     "pydantic[email]>=2.11.9",
     "pymongo>=4.15.1",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
     "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.1.1",
     "rust-just>=1.42.4",
     "typer>=0.17.4",
 ]

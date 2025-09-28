@@ -9,11 +9,12 @@ services:
       - ./src:/app/src
       - ./logs:/app/logs
     environment:
-      MONGO_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
       MONGO_HOST: mongodb
       SERVER_INTERNAL_PORT: ${SERVER_INTERNAL_PORT}
       SERVER_INTERNAL_HOST: ${SERVER_INTERNAL_HOST}
+      LOGGING_DIR_PATH: ${MONGO_HOST}
     ports:
       - "${SERVER_EXTERNAL_PORT}:${SERVER_INTERNAL_PORT}"
     networks:
@@ -28,8 +29,8 @@ services:
     env_file:
       - .env
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     ports:
       - "27017:27017"
     networks:
