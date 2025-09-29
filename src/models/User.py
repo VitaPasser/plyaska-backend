@@ -7,7 +7,7 @@ from src.utils.models.BaseModelFutureDocument import BaseModelFutureDocument
 class UserModel(BaseModelFutureDocument):
     username: str
     email: EmailStr
-    full_name: str = None
+    full_name: str
     disabled: bool = False
 
 class User(UserModel, BaseDocument):

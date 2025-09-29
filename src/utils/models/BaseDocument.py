@@ -1,4 +1,4 @@
-from typing import TypeVar, Type
+from typing import Type, TypeVar
 
 from beanie import Document
 
@@ -9,6 +9,7 @@ T = TypeVar("T", bound=Type[Document])
 
 def auto_collection(cls: T) -> T:
     if not hasattr(cls, "Settings"):
+
         class Settings:
             name: str
 

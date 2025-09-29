@@ -1,7 +1,8 @@
 import logging
 from datetime import datetime
+from enum import Enum
 from http import HTTPMethod
-from typing import Type, TypeVar, Generic
+from typing import Generic, Type, TypeVar
 
 from beanie import PydanticObjectId
 from fastapi import APIRouter, HTTPException
@@ -41,7 +42,7 @@ class CRUDRouter(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
             create_schema: Type[CreateSchemaT] | None = None,
             update_schema: Type[UpdateSchemaT] | None = None,
             prefix: str | None = None,
-            tags: list[str] | None = None,
+            tags: list[str | Enum] | None = None,
             exclude: list[str] | None = None,
     ):
         if exclude is None:
@@ -91,14 +92,12 @@ class CRUDRouter(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         if len(path) > 0:
             if path[0] == '/':
                 path = path[1:]
-        if method is not None:
-            method = [method.upper()]
         logging.debug(f"Routes was: {router.routes}")
         router.routes = [
             r for r in router.routes
             if not (isinstance(r, APIRoute)
                     and r.path == f"{self.prefix}/{path}"
-                    and (method is None or r.methods == method)
+                    and (method is None or r.methods == [method.value])
                     and (name is None or r.name == name))
         ]
         logging.getLogger(__name__)

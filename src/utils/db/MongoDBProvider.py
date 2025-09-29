@@ -1,4 +1,5 @@
 import logging
+
 from beanie import init_beanie
 from pymongo import AsyncMongoClient
 
@@ -36,9 +37,6 @@ class MongoDBProvider(DBProvider):
             self.__is_initialized = True
             logging.info("DB is initialized with Beanie")
 
-        return self.__client
-
-    def get_client(self) -> AsyncMongoClient:
         return self.__client
 
     async def disconnect(self):

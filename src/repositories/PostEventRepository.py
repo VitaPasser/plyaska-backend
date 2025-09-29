@@ -6,8 +6,9 @@ from bson import SON
 from src.models.PostEvent import PostEvent
 
 
-async def find_near_post_events(max_distance_in_meters: int,
-                                coordinates: Tuple[float, float]):
+async def find_near_post_events(
+    max_distance_in_meters: int, coordinates: Tuple[float, float]
+):
     now = datetime.now()
     return await PostEvent.aggregate(
         [
@@ -16,7 +17,7 @@ async def find_near_post_events(max_distance_in_meters: int,
                     "near": {"type": "Point", "coordinates": coordinates},
                     "distanceField": "distance",
                     "maxDistance": max_distance_in_meters,
-                    "spherical": True
+                    "spherical": True,
                 }
             },
             {
@@ -30,9 +31,9 @@ async def find_near_post_events(max_distance_in_meters: int,
                                 "$and": [
                                     {"$gt": ["$$promotions.promotion_type.power", 0]},
                                     {"$lte": ["$$promotions.start_datetime", now]},
-                                    {"$gt": ["$$promotions.end_datetime", now]}
+                                    {"$gt": ["$$promotions.end_datetime", now]},
                                 ]
-                            }
+                            },
                         }
                     }
                 }
@@ -50,21 +51,26 @@ async def find_near_post_events(max_distance_in_meters: int,
                                             "input": "$active_promotions",
                                             "as": "ap",
                                             "in": {
-                                                "$divide": ["$distance", "$$ap.promotion_type.power"]
-                                            }
+                                                "$divide": [
+                                                    "$distance",
+                                                    "$$ap.promotion_type.power",
+                                                ]
+                                            },
                                         }
                                     },
-                                    "initialValue": float("inf"),  # стартовое большое число
-                                    "in": {"$min": ["$$value", "$$this"]}
+                                    "initialValue": float(
+                                        "inf"
+                                    ),  # стартовое большое число
+                                    "in": {"$min": ["$$value", "$$this"]},
                                 }
                             },
                             # Если активных нет — просто расстояние
-                            "$distance"
+                            "$distance",
                         ]
                     }
                 }
             },
             {"$sort": SON([("score", 1)])},
-            {"$limit": 10000}
+            {"$limit": 10000},
         ]
     ).to_list()

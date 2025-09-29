@@ -1,8 +1,8 @@
 import datetime
-from typing import List, Literal, Tuple, Optional, Annotated
+from typing import Annotated, List, Literal, Optional, Tuple
 
 import pymongo
-from beanie import Indexed, Link, DecimalAnnotation
+from beanie import DecimalAnnotation, Indexed, Link
 from pydantic import BaseModel, Field
 
 from src.models.Promotion import Promotion
@@ -21,7 +21,7 @@ class PromotionDeal(BaseModel):
 
 class Image(BaseModel):
     url: str
-    description: str = None
+    description: str
 
 
 class Location(BaseModel):

@@ -1,12 +1,12 @@
 import posixpath
+from pathlib import Path
 
 import inflect
 import typer
-from pathlib import Path
-
-from camelsnake import snake_to_camel
+from camelsnake import snake_to_camel  # type: ignore
 
 app = typer.Typer(help="Plyaska Backend CLI")
+
 
 def generate_by_template(template_folder: str, name: str, _type: str):
     if _type == "models":
@@ -16,6 +16,7 @@ def generate_by_template(template_folder: str, name: str, _type: str):
     with open(f"{template_folder}/{_type}.txt", "rt") as f:
         Path(to_write).write_text(f.read().format(name=name))
         typer.echo(f"Создан файл типа {_type} {to_write}")
+
 
 @app.command()
 def generate(name: str):

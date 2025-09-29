@@ -8,6 +8,7 @@ dependencies = [
     "asgi-lifespan>=2.1.0",
     "beanie>=2.0.0",
     "camelsnake>=0.0.2",
+    "coverage>=7.10.7",
     "debugpy>=1.8.17",
     "fastapi[all,standard]>=0.116.2",
     "httpsx>=0.0.1",
