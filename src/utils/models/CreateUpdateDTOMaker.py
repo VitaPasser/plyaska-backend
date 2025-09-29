@@ -5,7 +5,7 @@ from beanie import Document, Link
 from pydantic import BaseModel, create_model
 
 
-def convert_type_recursively(tp: Any, visited: set[int], name_suffix: str) -> Any:
+def convert_type_recursively(tp: Any, visited: set[int], name_suffix: str):
     """
     Recursively converts the type:
 
@@ -27,7 +27,7 @@ def convert_type_recursively(tp: Any, visited: set[int], name_suffix: str) -> An
         args = tuple(
             convert_type_recursively(a, visited, name_suffix) for a in get_args(tp)
         )
-        return origin[args]  # type: ignore
+        return origin[args] # type: ignore
     if origin is dict:
         k, v = get_args(tp)
         return dict[convert_type_recursively(k, visited, name_suffix), convert_type_recursively(v, visited, name_suffix)] # type: ignore
@@ -35,7 +35,7 @@ def convert_type_recursively(tp: Any, visited: set[int], name_suffix: str) -> An
         args = tuple(
             convert_type_recursively(a, visited, name_suffix) for a in get_args(tp)
         )
-        return origin[args]  # type: ignore
+        return origin[args] # type: ignore
 
     # Inquired Pydantic model
     if isinstance(tp, type) and issubclass(tp, BaseModel):

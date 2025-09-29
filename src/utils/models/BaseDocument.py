@@ -7,7 +7,7 @@ from src.utils.String import camel_to_db_name
 T = TypeVar("T", bound=Type[Document])
 
 
-def auto_collection(cls: T) -> T:
+def auto_collection(cls: T):
     if not hasattr(cls, "Settings"):
 
         class Settings:

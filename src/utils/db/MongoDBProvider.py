@@ -15,7 +15,7 @@ class MongoDBProvider(DBProvider):
     __is_initialized: bool = False
     __client: AsyncMongoClient|None = None
 
-    def __init__(self, database: str, username: str, password: str, host: str):
+    def __init__(self, database: str, username: str, password: str, host: str) -> None:
         self.username = username
         self.password = password
         self.host = host

@@ -57,8 +57,7 @@ class CRUDRouter(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         self.create = self._create(self.create_schema)
         self.update = self._update(self.update_schema)
 
-        # define routes
-        crud_defines = {
+        routes_define = {
             self.create.__name__: lambda: self.router.post("/", response_model=model)(self.create),
             self.find_all.__name__: lambda: self.router.get("/", response_model=list[model])(self.find_all),
             self.find_by_id.__name__: lambda: self.router.get("/{id}", response_model=model)(self.find_by_id),
@@ -66,9 +65,9 @@ class CRUDRouter(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
             self.delete.__name__: lambda: self.router.delete("/{id}")(self.delete),
         }
 
-        crud_could_defines = {key: value for key, value in crud_defines.items() if key not in exclude}
+        routes_could_define = {key: value for key, value in routes_define.items() if key not in exclude}
 
-        for define in crud_could_defines.values():
+        for define in routes_could_define.values():
             define()
 
     def delete_query(self, path: str,

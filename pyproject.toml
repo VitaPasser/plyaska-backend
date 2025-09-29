@@ -5,26 +5,37 @@ description = "Plyaska is a backend service for searching nearby dance groups an
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "asgi-lifespan>=2.1.0",
     "beanie>=2.0.0",
     "camelsnake>=0.0.2",
-    "coverage>=7.10.7",
-    "debugpy>=1.8.17",
     "fastapi[all,standard]>=0.116.2",
     "httpsx>=0.0.1",
     "inflect>=7.5.0",
-    "mypy>=1.11",
+    "pydantic-settings>=2.10.1",
     "pydantic[email]>=2.11.9",
     "pymongo>=4.15.1",
-    "pytest>=8.4.2",
-    "pytest-asyncio>=1.2.0",
-    "python-dateutil>=2.9.0.post0",
     "python-dotenv>=1.1.1",
-    "rust-just>=1.42.4",
-    "typer>=0.17.4",
 ]
 
 [tool.uv.workspace]
 members = [
     "test",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+    "asgi-lifespan>=2.1.0",
+    "coverage>=7.10.7",
+    "debugpy>=1.8.17",
+    "typer>=0.17.4",
+    "rust-just>=1.42.4",
+]
+
+[build-system]
+requires = ["uv_build>=0.8.20,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "src"
+module-root = ""
