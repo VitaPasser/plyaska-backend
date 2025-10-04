@@ -1,4 +1,5 @@
 import logging
+import threading
 
 from beanie import init_beanie
 from pymongo import AsyncMongoClient
@@ -20,6 +21,7 @@ class MongoDBProvider(DBProvider):
         self.password = password
         self.host = host
         self.db = database
+        self.lock = threading.Lock()
         super().__init__()
 
     def __get_url(self) -> str:
@@ -27,15 +29,19 @@ class MongoDBProvider(DBProvider):
 
     async def connect(self):
         if not self.__client:
-            self.__client = AsyncMongoClient(self.__get_url())
-            logging.info("Connected to MongoDB")
+            with self.lock:
+                if not self.__client:
+                    self.__client = AsyncMongoClient(self.__get_url())
+                    logging.info("Connected to MongoDB")
         if not self.__is_initialized:
-            loaded_documents = _load_documents()
-            logging.debug(f"Loaded documents: {loaded_documents}")
-            await init_beanie(database=self.__client.plyaska_db,
-                              document_models=loaded_documents)
-            self.__is_initialized = True
-            logging.info("DB is initialized with Beanie")
+            with self.lock:
+                if not self.__is_initialized:
+                    loaded_documents = _load_documents()
+                    logging.debug(f"Loaded documents: {loaded_documents}")
+                    await init_beanie(database=self.__client.plyaska_db,
+                                      document_models=loaded_documents)
+                    self.__is_initialized = True
+                    logging.info("DB is initialized with Beanie")
 
         return self.__client
 

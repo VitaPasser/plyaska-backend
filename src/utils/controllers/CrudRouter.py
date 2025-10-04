@@ -11,10 +11,11 @@ from pydantic import BaseModel
 
 from src.utils.models.BaseDocument import BaseDocument
 from src.utils.models.CreateUpdateDTOMaker import make_create_schema, make_update_schema
+from src.utils.models.BaseModelFutureDocument import DateArchive
 
-ModelT = TypeVar("ModelT", bound=BaseDocument)
+ModelT = TypeVar("ModelT", bound=BaseDocument|DateArchive)
 CreateSchemaT = TypeVar("CreateSchemaT", bound=BaseModel)
-UpdateSchemaT = TypeVar("UpdateSchemaT", bound=BaseModel)
+UpdateSchemaT = TypeVar("UpdateSchemaT", bound=type[BaseModel, DateArchive])
 
 
 class CRUDRouter(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
@@ -58,10 +59,10 @@ class CRUDRouter(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
         self.update = self._update(self.update_schema)
 
         routes_define = {
-            self.create.__name__: lambda: self.router.post("/", response_model=model)(self.create),
+            self.create.__name__: lambda: self.router.post("/", response_model=model, status_code=201)(self.create),
             self.find_all.__name__: lambda: self.router.get("/", response_model=list[model])(self.find_all),
             self.find_by_id.__name__: lambda: self.router.get("/{id}", response_model=model)(self.find_by_id),
-            self.update.__name__: lambda: self.router.put("/{id}", response_model=model)(self.update),
+            self.update.__name__: lambda: self.router.patch("/{id}", response_model=model)(self.update),
             self.delete.__name__: lambda: self.router.delete("/{id}")(self.delete),
         }
 
@@ -118,8 +119,8 @@ class CRUDRouter(Generic[ModelT, CreateSchemaT, UpdateSchemaT]):
             obj = await self.model.get(id)
             if not obj:
                 raise HTTPException(status_code=404, detail="Not found")
-            update_data = {k: v for k, v in item.model_dump(exclude_unset=True).items()}
-            update_data['update_at'] = datetime.now()
+            update_data = obj.model_copy(update=item.model_dump(exclude_unset=True))
+            update_data.updated_at = datetime.now()
             await obj.set(update_data)
             return await self.model.get(id)
 

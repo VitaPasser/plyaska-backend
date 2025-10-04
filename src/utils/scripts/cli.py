@@ -11,10 +11,17 @@ app = typer.Typer(help="Plyaska Backend CLI")
 def generate_by_template(template_folder: str, name: str, _type: str):
     if _type == "models":
         to_write = f"./src/{_type}/{name}.py"
+    elif _type == "tests":
+        to_write = f"./tests/controllers/test_{name}s.py"
     else:
         to_write = f"./src/{_type}/{name}{snake_to_camel(inflect.engine().singular_noun(text=_type)).capitalize()}.py"
     with open(f"{template_folder}/{_type}.txt", "rt") as f:
-        Path(to_write).write_text(f.read().format(name=name))
+        text = f.read()
+        if _type == "tests":
+            text = text.format(name=name, lower_name=name.lower())
+        else:
+            text = text.format(name=name)
+        Path(to_write).write_text(text)
         typer.echo(f"Создан файл типа {_type} {to_write}")
 
 
@@ -32,6 +39,7 @@ def generate(name: str):
         "repositories",
         "services",
         "controllers",
+        "tests",
     ]
 
     for value in types:

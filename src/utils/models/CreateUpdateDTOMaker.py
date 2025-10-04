@@ -1,5 +1,5 @@
 import logging
-from typing import Any, get_args, get_origin
+from typing import Any, get_args, get_origin, Optional
 
 from beanie import Document, Link
 from pydantic import BaseModel, create_model
@@ -52,6 +52,7 @@ def make_input_schema(
     name_suffix: str = "Create",
     exclude_fields: set[str] | None = None,
     _visited: set[int] | None = None,
+    update: bool = False,
 ) -> type[BaseModel]:
     """
     Creates a Pydantic scheme:
@@ -74,8 +75,15 @@ def make_input_schema(
     for fname, f in model.model_fields.items():
         if fname in exclude_fields:
             continue
-        default = f.default if f.default is not None else ...
+
         new_type = convert_type_recursively(f.annotation, visited, name_suffix)
+
+        if update:
+            new_type = Optional[new_type]
+            default = None
+        else:
+            default = f.default if f.default is not None else ...
+
         fields[fname] = (new_type, default)
 
     return create_model(f"{model.__name__}{name_suffix}", **fields)
@@ -86,4 +94,4 @@ def make_create_schema(model: type[Document]):
 
 
 def make_update_schema(model: type[Document]):
-    return make_input_schema(model=model, name_suffix="Update")
+    return make_input_schema(model=model, name_suffix="Update", update=True)
