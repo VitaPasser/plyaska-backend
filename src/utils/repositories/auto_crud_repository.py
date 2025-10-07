@@ -2,7 +2,7 @@ import sys
 from abc import ABC, abstractmethod
 from typing import Type
 
-from src.utils.models.data_to_objects import ModelT, CreateSchemaT, UpdateSchemaT
+from src.utils.models.data_to_objects import CreateSchemaT, ModelT, UpdateSchemaT
 
 
 class AutoCRUDRepository(ABC):

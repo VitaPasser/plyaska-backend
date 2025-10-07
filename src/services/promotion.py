@@ -4,8 +4,8 @@ from beanie import PydanticObjectId
 from dateutil.relativedelta import relativedelta
 from fastapi import HTTPException
 
-from src.models.PostEvent import PromotionDeal
-from src.models.Promotion import Promotion
+from src.models.post_event import PromotionDeal
+from src.models.promotion import Promotion
 
 
 async def create_deal(promotion: Promotion):

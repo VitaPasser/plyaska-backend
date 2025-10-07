@@ -3,7 +3,7 @@ from typing import Any, Callable, Coroutine, Generic
 
 from httpx import Response
 
-from src.utils.controllers.CrudRouter import ModelT
+from src.utils.controllers.crud_router import ModelT
 
 
 @dataclass

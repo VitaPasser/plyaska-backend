@@ -7,13 +7,16 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter
 from fastapi.routing import APIRoute
 
-from src.exceptions.http_errors import NotFoundedHTTPException
-from src.exceptions.repository_errors import NotFoundedError
-from src.utils.models.CreateUpdateDTOMaker import make_create_schema, make_update_schema
+from src.exceptions.errors.http import NotFoundedHTTPException
+from src.exceptions.errors.repository import NotFoundedError
+from src.utils.models.create_update_dto_maker import (
+    make_create_schema,
+    make_update_schema,
+)
+from src.utils.models.data_to_objects import CreateSchemaT, ModelT, UpdateSchemaT
 from src.utils.repositories.auto_crud_repository import AutoCRUDRepository
 from src.utils.repositories.beanie_auto_crud_repository import BeanieAutoCRUDRepository
 
-from src.utils.models.data_to_objects import ModelT, CreateSchemaT, UpdateSchemaT
 
 class CRUDRouter:
     """
@@ -50,7 +53,7 @@ class CRUDRouter:
         self.update_schema = update_schema or make_update_schema(model)
         self.prefix = prefix or f"/{model.__name__.lower()}s"
         self.router = APIRouter(prefix=self.prefix, tags=tags or [model.__name__])
-        self.repository: AutoCRUDRepository[ModelT, CreateSchemaT, UpdateSchemaT] = (
+        self.repository: AutoCRUDRepository = (
             BeanieAutoCRUDRepository(self.model)
         )
 

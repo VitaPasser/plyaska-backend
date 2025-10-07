@@ -2,7 +2,7 @@ from typing import Type, TypeVar
 
 from beanie import Document
 
-from src.utils.String import camel_to_db_name
+from src.utils.string import camel_to_db_name
 
 T = TypeVar("T", bound=Type[Document])
 

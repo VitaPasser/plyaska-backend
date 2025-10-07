@@ -4,7 +4,7 @@ import pkgutil
 
 from beanie import Document
 
-from src.utils.models.BaseDocument import BaseDocument
+from src.utils.models.base_document import BaseDocument
 
 
 def load_beanie_models(package_name: str):

@@ -4,8 +4,8 @@ import threading
 from beanie import init_beanie
 from pymongo import AsyncMongoClient
 
-from src.utils.db.DBProvider import DBProvider
-from src.utils.models.ModelsLoader import load_beanie_models
+from src.utils.db.db_provider import DBProvider
+from src.utils.models.models_loader import load_beanie_models
 
 
 def _load_documents():
@@ -14,7 +14,7 @@ def _load_documents():
 
 class MongoDBProvider(DBProvider):
     __is_initialized: bool = False
-    __client: AsyncMongoClient|None = None
+    __client: AsyncMongoClient | None = None
 
     def __init__(self, database: str, username: str, password: str, host: str) -> None:
         self.username = username
@@ -38,8 +38,10 @@ class MongoDBProvider(DBProvider):
                 if not self.__is_initialized:
                     loaded_documents = _load_documents()
                     logging.debug(f"Loaded documents: {loaded_documents}")
-                    await init_beanie(database=self.__client.plyaska_db,
-                                      document_models=loaded_documents)
+                    await init_beanie(
+                        database=self.__client.plyaska_db,
+                        document_models=loaded_documents,
+                    )
                     self.__is_initialized = True
                     logging.info("DB is initialized with Beanie")
 
@@ -54,4 +56,3 @@ class MongoDBProvider(DBProvider):
         self.__client = None
         self.__is_initialized = False
         logging.info("DB is disconnected")
-

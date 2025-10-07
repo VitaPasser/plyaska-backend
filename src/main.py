@@ -5,11 +5,11 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 
-from src.utils.Config import settings
-from src.utils.controllers.ControllersLoader import load_fastapi_routers
-from src.utils.db.MongoDBProvider import MongoDBProvider
-from src.utils.handlers.exceptionHandlers import ExceptionHandlers
-from src.utils.Logging import logging_setup
+from src.utils.config import settings
+from src.utils.controllers.controllers_loader import load_fastapi_routers
+from src.utils.db.mongo_db_provider import MongoDBProvider
+from src.utils.handlers.exception_handlers import include_exceptions
+from src.utils.logging import logging_setup
 
 
 class Main:
@@ -31,8 +31,7 @@ class Main:
             await self.teardown()
 
         self.app = FastAPI(lifespan=lifespan)
-        eh = ExceptionHandlers(self.app)
-        self.app = eh.app
+        self.app = include_exceptions(self.app)
         logging.info("Main initialized")
 
     async def setup(self):

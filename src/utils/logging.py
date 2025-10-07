@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import date
 
-from src.utils.Config import settings
+from src.utils.config import settings
 
 
 def logging_setup():

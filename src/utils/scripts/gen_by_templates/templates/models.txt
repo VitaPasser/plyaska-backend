@@ -4,9 +4,9 @@ from src.utils.models.BaseDocument import BaseDocument
 from src.utils.models.BaseModelFutureDocument import BaseModelFutureDocument
 
 
-class {name}Model(BaseModelFutureDocument):
+class {class_name}Model(BaseModelFutureDocument):
     pass
 
 
-class {name}({name}Model, BaseDocument):
+class {class_name}({class_name}Model, BaseDocument):
     pass

@@ -5,10 +5,10 @@ import pymongo
 from beanie import DecimalAnnotation, Indexed, Link
 from pydantic import BaseModel, Field
 
-from src.models.Promotion import Promotion
-from src.models.User import User
-from src.utils.models.BaseDocument import BaseDocument
-from src.utils.models.BaseModelFutureDocument import BaseModelFutureDocument
+from src.models.promotion import Promotion
+from src.models.user import User
+from src.utils.models.base_document import BaseDocument
+from src.utils.models.base_model_future_document import BaseModelFutureDocument
 
 
 class PromotionDeal(BaseModel):

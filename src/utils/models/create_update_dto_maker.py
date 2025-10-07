@@ -1,5 +1,5 @@
 import logging
-from typing import Any, get_args, get_origin, Optional
+from typing import Any, Optional, get_args, get_origin
 
 from beanie import Document, Link
 from pydantic import BaseModel, create_model

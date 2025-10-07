@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from beanie import PydanticObjectId
 
-from src.models.User import User
+from src.models.user import User
 from src.utils.repositories.beanie_auto_crud_repository import BeanieAutoCRUDRepository
 
 __repository = BeanieAutoCRUDRepository(User)

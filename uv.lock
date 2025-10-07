@@ -476,6 +476,18 @@ wheels = [
 ]
 
 [[package]]
+name = "mkinit"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "ubelt" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8b/85/76f750d3b8413390a61208945d5eb30dbfc4dc35697931af03638f40a508/mkinit-1.1.0.tar.gz", hash = "sha256:052ee0ba314fbacfc2d04314812868053a3a3acbd393e6a7c0aea4b9f697f6da", size = 63741, upload-time = "2024-01-17T17:35:17.217Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b2/3b/4e5fabaa924292216f23f095009f9e091b49018e18d653eedab2dd25885c/mkinit-1.1.0-py3-none-any.whl", hash = "sha256:b49dca93956c1e3ba2ae84fa31238745cf1d1aaa47ab53aeda5e22d375a3732a", size = 63103, upload-time = "2024-01-17T17:35:14.697Z" },
+]
+
+[[package]]
 name = "more-itertools"
 version = "10.8.0"
 source = { registry = "https://pypi.org/simple" }
@@ -546,6 +558,7 @@ dependencies = [
     { name = "fastapi", extra = ["all", "standard"] },
     { name = "httpsx" },
     { name = "inflect" },
+    { name = "mkinit" },
     { name = "pydantic", extra = ["email"] },
     { name = "pydantic-settings" },
     { name = "pymongo" },
@@ -572,6 +585,7 @@ requires-dist = [
     { name = "fastapi", extras = ["all", "standard"], specifier = ">=0.116.2" },
     { name = "httpsx", specifier = ">=0.0.1" },
     { name = "inflect", specifier = ">=7.5.0" },
+    { name = "mkinit", specifier = ">=1.1.0" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.11.9" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pymongo", specifier = ">=4.15.1" },
@@ -975,6 +989,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f8/b1/0c11f5058406b3af7609f121aaa6b609744687f1d158b3c3a5bf4cc94238/typing_inspection-0.4.1.tar.gz", hash = "sha256:6ae134cc0203c33377d43188d4064e9b357dba58cff3185f22924610e70a9d28", size = 75726, upload-time = "2025-05-21T18:55:23.885Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/17/69/cd203477f944c353c31bade965f880aa1061fd6bf05ded0726ca845b6ff7/typing_inspection-0.4.1-py3-none-any.whl", hash = "sha256:389055682238f53b04f7badcb49b989835495a96700ced5dab2d8feae4b26f51", size = 14552, upload-time = "2025-05-21T18:55:22.152Z" },
+]
+
+[[package]]
+name = "ubelt"
+version = "1.4.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a2/24/cec4c09e785f5fdf0b1c7f930ab30710090dabf746b9beb45296d5c55390/ubelt-1.4.0.tar.gz", hash = "sha256:84e146c1c3ba13a2425eea5d5748bf33ab3f9dbe7ce237eb11e130116ba17441", size = 296335, upload-time = "2025-08-17T03:41:35.672Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2d/dd/035fc8cd0a6311a48912b129cb93a19430d8d1e2bf2e8f03d8e1e5e8eb9b/ubelt-1.4.0-py3-none-any.whl", hash = "sha256:1490f377ba3cd1d65d839fae4c1a0354c5d486f3cb19e0cb434712709fcf49df", size = 233381, upload-time = "2025-08-17T03:41:33.428Z" },
 ]
 
 [[package]]

@@ -3,7 +3,7 @@ from typing import Tuple
 
 from bson import SON
 
-from src.models.PostEvent import PostEvent
+from src.models.post_event import PostEvent
 
 
 async def find_near_post_events(

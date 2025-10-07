@@ -3,8 +3,8 @@ from typing import Annotated, Optional
 from beanie import DecimalAnnotation
 from pydantic import BaseModel, Field
 
-from src.utils.models.BaseDocument import BaseDocument
-from src.utils.models.BaseModelFutureDocument import BaseModelFutureDocument
+from src.utils.models.base_document import BaseDocument
+from src.utils.models.base_model_future_document import BaseModelFutureDocument
 
 
 class Money(BaseModel):

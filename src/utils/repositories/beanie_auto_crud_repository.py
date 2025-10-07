@@ -3,8 +3,8 @@ from typing import Type
 
 from beanie import PydanticObjectId
 
-from src.exceptions.repository_errors import NotFoundedError
-from src.utils.models.data_to_objects import ModelT, CreateSchemaT, UpdateSchemaT
+from src.exceptions.errors.repository import NotFoundedError
+from src.utils.models.data_to_objects import CreateSchemaT, ModelT, UpdateSchemaT
 from src.utils.repositories.auto_crud_repository import AutoCRUDRepository
 
 

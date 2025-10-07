@@ -3,7 +3,7 @@ from pathlib import Path
 
 import inflect
 import typer
-from camelsnake import snake_to_camel  # type: ignore
+from camelsnake import snake_to_camel, camel_to_snake  # type: ignore
 
 app = typer.Typer(help="Plyaska Backend CLI")
 
@@ -18,7 +18,7 @@ def generate_by_template(template_folder: str, name: str, _type: str):
     with open(f"{template_folder}/{_type}.txt", "rt") as f:
         text = f.read()
         if _type == "tests":
-            text = text.format(name=name, lower_name=name.lower())
+            text = text.format(name=name, class_name=snake_to_camel(name))
         else:
             text = text.format(name=name)
         Path(to_write).write_text(text)
@@ -32,7 +32,7 @@ def generate(name: str):
     """
     templates_folder_path = f"{posixpath.dirname(__file__)}/templates"
 
-    camel_name = snake_to_camel(name).capitalize()
+    file_name = camel_to_snake(name).lower()
 
     types = [
         "models",
@@ -43,7 +43,7 @@ def generate(name: str):
     ]
 
     for value in types:
-        generate_by_template(templates_folder_path, camel_name, value)
+        generate_by_template(templates_folder_path, file_name, value)
 
 
 if __name__ == "__main__":

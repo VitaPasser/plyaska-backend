@@ -2,7 +2,7 @@ import pytest
 import pytest_asyncio
 from httpx import AsyncClient
 
-from src.models.User import User
+from src.models.user import User
 from src.utils.test_utils.response_models import ResponseDo, ResponseModel
 
 
