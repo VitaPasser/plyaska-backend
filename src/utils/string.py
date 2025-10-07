@@ -1,5 +1,5 @@
 import inflect
-from camelsnake import camel_to_snake  # type: ignore
+from inflection import underscore
 
 
 def pluralize_snake(name: str):
@@ -9,4 +9,4 @@ def pluralize_snake(name: str):
 
 
 def camel_to_db_name(name: str):
-    return pluralize_snake(camel_to_snake(name))
+    return pluralize_snake(underscore(name))

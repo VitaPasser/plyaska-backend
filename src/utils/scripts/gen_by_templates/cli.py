@@ -1,28 +1,25 @@
 import posixpath
 from pathlib import Path
 
-import inflect
 import typer
-from camelsnake import snake_to_camel, camel_to_snake  # type: ignore
+from inflection import camelize, underscore
 
-app = typer.Typer(help="Plyaska Backend CLI")
+app = typer.Typer(help="Plyaska Backend CLI - Generate files by templates")
 
 
 def generate_by_template(template_folder: str, name: str, _type: str):
     if _type == "models":
         to_write = f"./src/{_type}/{name}.py"
+    elif _type == "controllers":
+        to_write = f"./src/{_type}/{name}_crud.py"
     elif _type == "tests":
         to_write = f"./tests/controllers/test_{name}s.py"
     else:
-        to_write = f"./src/{_type}/{name}{snake_to_camel(inflect.engine().singular_noun(text=_type)).capitalize()}.py"
+        to_write = f"./src/{_type}/{name}.py"
     with open(f"{template_folder}/{_type}.txt", "rt") as f:
-        text = f.read()
-        if _type == "tests":
-            text = text.format(name=name, class_name=snake_to_camel(name))
-        else:
-            text = text.format(name=name)
+        text = f.read().format(name=name, class_name=camelize(name))
         Path(to_write).write_text(text)
-        typer.echo(f"Создан файл типа {_type} {to_write}")
+        typer.echo(f"🧱 Created a file of type {_type} in {to_write}")
 
 
 @app.command()
@@ -32,7 +29,7 @@ def generate(name: str):
     """
     templates_folder_path = f"{posixpath.dirname(__file__)}/templates"
 
-    file_name = camel_to_snake(name).lower()
+    file_name = underscore(name)
 
     types = [
         "models",

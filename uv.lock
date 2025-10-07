@@ -53,15 +53,6 @@ wheels = [
 ]
 
 [[package]]
-name = "camelsnake"
-version = "0.0.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/8e/7c/8ed028389ea052421c61f216a64b75f799dd62a4332d16417f8e475fed8e/camelsnake-0.0.2.tar.gz", hash = "sha256:08f19c6101f01689446751c001445123a113e24b0b95174ad57e283efb91128b", size = 21159, upload-time = "2023-02-14T12:23:20.351Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/be/79/a24f2baf3920f440de1439e09220a03f620554f96ecbe1a64f40418ff3fd/camelsnake-0.0.2-py3-none-any.whl", hash = "sha256:2251fd6ecdbfdf90bf55f26cf6a115df1c19fecacfdbfbddd6702f4d70709add", size = 3434, upload-time = "2023-02-14T12:23:18.754Z" },
-]
-
-[[package]]
 name = "certifi"
 version = "2025.8.3"
 source = { registry = "https://pypi.org/simple" }
@@ -385,6 +376,15 @@ wheels = [
 ]
 
 [[package]]
+name = "inflection"
+version = "0.5.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e1/7e/691d061b7329bc8d54edbf0ec22fbfb2afe61facb681f9aaa9bff7a27d04/inflection-0.5.1.tar.gz", hash = "sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417", size = 15091, upload-time = "2020-08-22T08:16:29.139Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/59/91/aa6bde563e0085a02a435aa99b49ef75b0a4b062635e606dab23ce18d720/inflection-0.5.1-py2.py3-none-any.whl", hash = "sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2", size = 9454, upload-time = "2020-08-22T08:16:27.816Z" },
+]
+
+[[package]]
 name = "iniconfig"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -554,10 +554,10 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "beanie" },
-    { name = "camelsnake" },
     { name = "fastapi", extra = ["all", "standard"] },
     { name = "httpsx" },
     { name = "inflect" },
+    { name = "inflection" },
     { name = "mkinit" },
     { name = "pydantic", extra = ["email"] },
     { name = "pydantic-settings" },
@@ -581,10 +581,10 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "beanie", specifier = ">=2.0.0" },
-    { name = "camelsnake", specifier = ">=0.0.2" },
     { name = "fastapi", extras = ["all", "standard"], specifier = ">=0.116.2" },
     { name = "httpsx", specifier = ">=0.0.1" },
     { name = "inflect", specifier = ">=7.5.0" },
+    { name = "inflection", specifier = ">=0.5.1" },
     { name = "mkinit", specifier = ">=1.1.0" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.11.9" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
