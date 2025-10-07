@@ -8,8 +8,8 @@ app = typer.Typer(help="Plyaska Backend CLI - Auto generate __init__.py files")
 
 @app.command()
 def run_mkinit_for_all(base_dir: str):
-    """Сгенерировать автоматически импорт модулей в данной директории и под директориях.
-    :param base_dir: Путь до директории с модулями
+    """To generate automatically the import of modules in this directory and submarines.
+    :param base_dir: The path to the Directory with the modules
     """
     for root, dirs, files in os.walk(base_dir):
         if "__pycache__" in root:

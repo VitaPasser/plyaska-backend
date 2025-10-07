@@ -22,11 +22,17 @@ def generate_by_template(template_folder: str, name: str, _type: str):
         typer.echo(f"🧱 Created a file of type {_type} in {to_write}")
 
 
-@app.command()
-def generate(name: str):
-    """Сгенерировать заготовку файла с кодом.
-    :param name: Писать в snake case
-    """
+@app.command(name="generate by template")
+def generate(
+    name: str = typer.Argument(..., help="Write in snake case"),
+    exclude: str = typer.Option(
+        "",
+        "--exclude",
+            "-e",
+        help="Comma-separated list of types to exclude. Available types: models, repositories, services, controllers, tests",
+    ),
+):
+    """Generate a file blank with a template code."""
     templates_folder_path = f"{posixpath.dirname(__file__)}/templates"
 
     file_name = underscore(name)
@@ -38,6 +44,10 @@ def generate(name: str):
         "controllers",
         "tests",
     ]
+
+    if exclude:
+        exclude_types = {etype.strip() for etype in exclude.split(",")}
+        types = [t for t in types if t not in exclude_types]
 
     for value in types:
         generate_by_template(templates_folder_path, file_name, value)
