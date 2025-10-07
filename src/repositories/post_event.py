@@ -1,9 +1,30 @@
 from datetime import datetime
-from typing import Tuple
+from typing import TYPE_CHECKING, Tuple
 
+from beanie import PydanticObjectId
 from bson import SON
 
 from src.models.post_event import PostEvent
+from src.utils.models.data_to_objects import CreateSchemaT, UpdateSchemaT
+from src.utils.repositories.beanie_auto_crud_repository import BeanieAutoCRUDRepository
+
+__repository = BeanieAutoCRUDRepository(PostEvent)
+
+__all__ = [f for f in __repository.export_methods().keys()]
+
+if TYPE_CHECKING:
+
+    async def create(item: CreateSchemaT | PostEvent) -> PostEvent: ...
+    async def update_or_error(
+        _id: PydanticObjectId, item: UpdateSchemaT | PostEvent
+    ) -> PostEvent: ...
+    async def update_or_create(
+        _id: PydanticObjectId, item: UpdateSchemaT | PostEvent
+    ) -> PostEvent: ...
+    async def find_all() -> list[PostEvent]: ...
+    async def find_by_id(_id: PydanticObjectId) -> PostEvent: ...
+    async def find_by_id_or_error(_id: PydanticObjectId) -> PostEvent: ...
+    async def delete(_id: PydanticObjectId) -> PostEvent: ...
 
 
 async def find_near_post_events(
