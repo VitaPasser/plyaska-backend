@@ -8,6 +8,8 @@ ADD ./uv.lock /app/uv.lock
 ADD ./pyproject.toml /app/pyproject.toml
 ADD ./.python-version /app/.python-version
 ADD ./src /app/src
+ADD .env /app/.env
+ADD README.md /app/README.md
 
 WORKDIR /app
 
