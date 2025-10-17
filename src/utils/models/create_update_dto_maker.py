@@ -5,7 +5,7 @@ from beanie import Document, Link
 from pydantic import BaseModel, create_model
 
 
-def convert_type_recursively(tp: Any, visited: set[int], name_suffix: str):
+def convert_type_recursively(tp: Any, visited: set[int], name_suffix: str, update: bool):
     """
     Recursively converts the type:
 
@@ -25,22 +25,26 @@ def convert_type_recursively(tp: Any, visited: set[int], name_suffix: str):
     origin = get_origin(tp)
     if origin in (list, set, tuple):
         args = tuple(
-            convert_type_recursively(a, visited, name_suffix) for a in get_args(tp)
+            convert_type_recursively(a, visited, name_suffix, update) for a in get_args(tp)
         )
-        return origin[args] # type: ignore
+        return origin[args]  # type: ignore
     if origin is dict:
         k, v = get_args(tp)
-        return dict[convert_type_recursively(k, visited, name_suffix), convert_type_recursively(v, visited, name_suffix)] # type: ignore
+        return dict[  # type: ignore
+            convert_type_recursively(k, visited, name_suffix, update),  # type: ignore
+            convert_type_recursively(v, visited, name_suffix, update)  # type: ignore
+        ]  # type: ignore
     if origin is not None:  # Union / Annotated / etc.
         args = tuple(
-            convert_type_recursively(a, visited, name_suffix) for a in get_args(tp)
+            convert_type_recursively(a, visited, name_suffix, update) for a in get_args(tp)
         )
-        return origin[args] # type: ignore
+        return origin[args]  # type: ignore
 
-    # Inquired Pydantic model
+    # Pydantic model
     if isinstance(tp, type) and issubclass(tp, BaseModel):
+        # если update=True, вложенная модель тоже делается частичной
         return make_input_schema(
-            tp, name_suffix=name_suffix, exclude_fields=set(), _visited=visited
+            tp, name_suffix=name_suffix, exclude_fields=set(), _visited=visited, update=update
         )
 
     return tp
@@ -55,10 +59,11 @@ def make_input_schema(
     update: bool = False,
 ) -> type[BaseModel]:
     """
-    Creates a Pydantic scheme:
+    Creates a Pydantic schema:
 
     - Link [...] -> str (including nested models)
-    - Basemodel inside are also processed
+    - Nested Basemodels are also processed
+    - If update=True, all fields become optional (including nested models)
     """
     visited = _visited or set()
     exclude_fields = exclude_fields or {
@@ -76,7 +81,7 @@ def make_input_schema(
         if fname in exclude_fields:
             continue
 
-        new_type = convert_type_recursively(f.annotation, visited, name_suffix)
+        new_type = convert_type_recursively(f.annotation, visited, name_suffix, update)
 
         if update:
             new_type = Optional[new_type]

@@ -1,6 +1,6 @@
 from typing import List
 
-from src.models.post_event import PostEvent, PostEventNear
+from src.models.post_event import PostEvent, PostEventNear, PostEventCreate
 from src.services.post_event import (
     add_promotion as add_promotion_service,
 )
@@ -9,11 +9,11 @@ from src.services.post_event import (
 )
 from src.utils.controllers.crud_router import CRUDRouter
 
-router = CRUDRouter(model=PostEvent, exclude=[CRUDRouter.find_all.__name__]).router
+router = CRUDRouter(model=PostEvent, create_schema=PostEventCreate, exclude=[CRUDRouter.find_all.__name__]).router
 
 
 @router.get("/", response_model=List[PostEventNear])
-async def index(longitude: float = 37.6173, latitude: float = 55.7558):
+async def index(longitude: float, latitude: float):
     near_post_events = await find_near_post_events((longitude, latitude))
     return near_post_events
 

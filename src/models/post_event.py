@@ -3,20 +3,29 @@ from typing import Annotated, List, Literal, Optional, Tuple
 
 import pymongo
 from beanie import DecimalAnnotation, Indexed, Link
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from src.models.promotion import Promotion
 from src.models.user import User
 from src.utils.models.base_document import BaseDocument
-from src.utils.models.base_model_future_document import BaseModelFutureDocument
+from src.utils.models.base_model import BaseModel
+from src.utils.models.base_model_future_document import (
+    BaseModelFutureDocument,
+    DateArchive,
+)
 
 
-class PromotionDeal(BaseModel):
+class PromotionDealCore(BaseModel):
     promotion_type: Link[Promotion]
     start_datetime: datetime.datetime = Field(default_factory=datetime.datetime.now)
     end_datetime: datetime.datetime
-    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
-    updated_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+
+
+class PromotionDeal(PromotionDealCore, DateArchive): ...
+
+
+class PromotionDealCreate(PromotionDealCore):
+    promotion_type: str  # Promotion ID
 
 
 class Image(BaseModel):
@@ -29,7 +38,7 @@ class Location(BaseModel):
     coordinates: Tuple[float, float]  # (longitude, latitude)
 
 
-class PostEventModel(BaseModelFutureDocument):
+class PostEventCore(BaseModel):
     name: str
     description: Optional[str] = None
     author: Link[User]
@@ -38,10 +47,17 @@ class PostEventModel(BaseModelFutureDocument):
     promotions: List[PromotionDeal] = Field(default_factory=list)
 
 
-class PostEvent(PostEventModel, BaseDocument):
-    pass
+class PostEventCreate(PostEventCore):
+    author: str  # User ID
+    promotions: List[PromotionDealCreate] | None = Field(default_factory=list)
+
+
+class PostEventModel(BaseModelFutureDocument, PostEventCore): ...
 
 
 class PostEventNear(PostEventModel):
     score: DecimalAnnotation
     active_promotions: List[PromotionDeal]
+
+
+class PostEvent(PostEventModel, BaseDocument): ...

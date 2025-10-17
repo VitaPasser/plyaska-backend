@@ -1,10 +1,11 @@
+from datetime import datetime
 from typing import Tuple
 
 from beanie import PydanticObjectId, WriteRules
 from fastapi import HTTPException
 
 from src import repositories, services
-from src.models.post_event import PostEvent
+from src.exceptions.errors.repository import NotFoundedError
 
 
 async def find_near_post_events(coordinates: Tuple[float, float]):
@@ -16,10 +17,10 @@ async def find_near_post_events(coordinates: Tuple[float, float]):
 
 
 async def find_by_id(post_event_id: PydanticObjectId):
-    post_event = await PostEvent.get(post_event_id)
-    if post_event is None:
+    try:
+        return await repositories.post_event.find_by_id_or_error(post_event_id)
+    except NotFoundedError:
         raise HTTPException(status_code=404, detail="Not found")
-    return post_event
 
 
 async def add_promotion(post_event_id: str, promotion_id: str):
@@ -27,4 +28,5 @@ async def add_promotion(post_event_id: str, promotion_id: str):
     promotion = await services.promotion.find_by_id(PydanticObjectId(promotion_id))
     promotion_deal = await services.promotion.create_deal(promotion)
     post_event.promotions.append(promotion_deal)
+    post_event.updated_at = datetime.now()
     return await post_event.save(link_rule=WriteRules.DO_NOTHING)

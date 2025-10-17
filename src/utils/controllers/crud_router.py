@@ -3,6 +3,7 @@ from enum import Enum
 from http import HTTPMethod
 from typing import Type
 
+import inflection
 from beanie import PydanticObjectId
 from fastapi import APIRouter
 from fastapi.routing import APIRoute
@@ -51,7 +52,7 @@ class CRUDRouter:
         self.model = model
         self.create_schema = create_schema or make_create_schema(model)
         self.update_schema = update_schema or make_update_schema(model)
-        self.prefix = prefix or f"/{model.__name__.lower()}s"
+        self.prefix = prefix or f"/{inflection.underscore(model.__name__).replace('_', '-')}s"
         self.router = APIRouter(prefix=self.prefix, tags=tags or [model.__name__])
         self.repository: AutoCRUDRepository = (
             BeanieAutoCRUDRepository(self.model)

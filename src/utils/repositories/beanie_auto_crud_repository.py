@@ -17,23 +17,25 @@ class BeanieAutoCRUDRepository(AutoCRUDRepository):
         await obj.insert()
         return obj
 
-    async def update_or_error(self, _id: PydanticObjectId, item: UpdateSchemaT | ModelT):
-        obj = await self.model.get(_id)
-        if not obj:
-            raise NotFoundedError(detail=f"{self.model} by id={_id}")
-        update_data = obj.model_copy(update=item.model_dump(exclude_unset=True))
+    async def _update(self, obj: ModelT, _id: PydanticObjectId, item: UpdateSchemaT | ModelT):
+        update_data = obj.update_from(item)
         update_data.updated_at = datetime.now()
         await obj.set(update_data.model_dump(exclude_unset=True))
         return await obj.get(_id)
 
-    async def update_or_create(self, _id: PydanticObjectId, item: UpdateSchemaT | ModelT):
+
+    async def update_or_error(self, _id: PydanticObjectId, item: UpdateSchemaT | ModelT):
         obj = await self.model.get(_id)
         if not obj:
-            obj = self.create(item)
-        update_data = obj.model_copy(update=item.model_dump(exclude_unset=True))
-        update_data.updated_at = datetime.now()
-        await obj.set(update_data.model_dump(exclude_unset=True))
-        return await obj.get(_id)
+            raise NotFoundedError(detail=f"{self.model} by id={_id}")
+        return await self._update(obj, _id, item)
+
+    async def update_or_create(self, _id: PydanticObjectId, item: UpdateSchemaT | ModelT):
+        try:
+            return await self.update_or_error(_id, item)
+        except NotFoundedError:
+            obj = await self.create(item)
+            return await self._update(obj, _id, item)
 
     async def find_all(self):
         return await self.model.find_all().to_list()

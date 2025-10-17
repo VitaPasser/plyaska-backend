@@ -4,8 +4,10 @@ from beanie import PydanticObjectId
 from dateutil.relativedelta import relativedelta
 from fastapi import HTTPException
 
+from src.exceptions.errors.repository import NotFoundedError
 from src.models.post_event import PromotionDeal
 from src.models.promotion import Promotion
+from src import repositories
 
 
 async def create_deal(promotion: Promotion):
@@ -18,7 +20,7 @@ async def create_deal(promotion: Promotion):
 
 
 async def find_by_id(promotion_id: PydanticObjectId):
-    promotion = await Promotion.get(promotion_id)
-    if promotion is None:
+    try:
+        return await repositories.promotion.find_by_id_or_error(promotion_id)
+    except NotFoundedError:
         raise HTTPException(status_code=404, detail="Not found")
-    return promotion

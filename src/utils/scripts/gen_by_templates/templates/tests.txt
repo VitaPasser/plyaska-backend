@@ -15,7 +15,8 @@ async def create_{name}(client: AsyncClient) -> ResponseDo:
                     {{}}
                     """,
         )
-        model = {class_name}.model_validate(response.json())
+        assert response.status_code == 201, output_response(response)
+        model = {class_name}(**response.json())
         return ResponseModel(response=response, model=model)
 
     {name} = await _create_{name}()

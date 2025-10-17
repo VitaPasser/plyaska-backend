@@ -1,10 +1,13 @@
 from typing import Annotated, Optional
 
 from beanie import DecimalAnnotation
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from src.utils.models.base_document import BaseDocument
-from src.utils.models.base_model_future_document import BaseModelFutureDocument
+from src.utils.models.base_model_future_document import (
+    BaseModelFutureDocument,
+)
+from src.utils.models.base_model import BaseModel
 
 
 class Money(BaseModel):
@@ -18,6 +21,7 @@ class PromotionModel(BaseModelFutureDocument):
     power: Annotated[DecimalAnnotation, Field(ge=0)]
     duration: Annotated[int, Field(ge=0)]  # In seconds
     price: Money
+
 
 class Promotion(PromotionModel, BaseDocument):
     pass

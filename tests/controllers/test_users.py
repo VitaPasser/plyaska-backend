@@ -3,6 +3,7 @@ import pytest_asyncio
 from httpx import AsyncClient
 
 from src.models.user import User
+from src.utils.test_utils.other import output_response
 from src.utils.test_utils.response_models import ResponseDo, ResponseModel
 
 
@@ -19,7 +20,8 @@ async def create_user(client: AsyncClient) -> ResponseDo:
                     }
                     """,
         )
-        model = User.model_validate(response.json())
+        assert response.status_code == 201, output_response(response)
+        model = User(**response.json())
         return ResponseModel(response=response, model=model)
 
     user = await _create_user()
