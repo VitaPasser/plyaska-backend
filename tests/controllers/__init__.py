@@ -1,3 +1,0 @@
-# <AUTOGEN_INIT>
-pass
-# </AUTOGEN_INIT>

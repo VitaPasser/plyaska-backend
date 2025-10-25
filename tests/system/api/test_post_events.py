@@ -3,10 +3,10 @@ import pytest_asyncio
 from httpx import AsyncClient
 
 from src.models.post_event import PostEvent
-from src.utils.test_utils.other import output_response
-from src.utils.test_utils.response_models import ResponseDo, ResponseModel
-from tests.controllers.test_promotions import create_promotion  # noqa: F401
-from tests.controllers.test_users import create_user  # noqa: F401
+from src.utils.tests.other import output_response
+from src.utils.tests.response_models import ResponseDo, ResponseModel
+from tests.system.api.test_promotions import create_promotion  # noqa: F401
+from tests.system.api.test_users import create_user  # noqa: F401
 
 
 @pytest_asyncio.fixture

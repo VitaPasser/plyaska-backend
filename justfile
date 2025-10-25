@@ -9,6 +9,13 @@ geninits *PATH_MODULE:
 alias gi := geninits
 
 coverage:
-    coverage run --source=src -m pytest tests
+    coverage run --source=src --omit="tests/system/load/*" -m pytest tests/system
     coverage report
     coverage html
+
+SERVICE := "http://localhost:8000"
+
+locust:
+    @curl -s {{SERVICE}} > /dev/null 2>&1 \
+      || (python -m src.main > /dev/null 2>&1 & PB_SERVICE_PID=$!; echo "Service not founded. Execute"; sleep 3)
+    locust -f tests/system/load/locustfile.py --host={{SERVICE}}

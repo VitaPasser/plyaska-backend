@@ -3,8 +3,8 @@ import pytest_asyncio
 from httpx import AsyncClient
 
 from src.models.user import User
-from src.utils.test_utils.other import output_response
-from src.utils.test_utils.response_models import ResponseDo, ResponseModel
+from src.utils.tests.other import output_response
+from src.utils.tests.response_models import ResponseDo, ResponseModel
 
 
 @pytest_asyncio.fixture
