@@ -7,3 +7,8 @@ geninits *PATH_MODULE:
     uv run src/utils/scripts/gen_inits/cli.py {{PATH_MODULE}}
 
 alias gi := geninits
+
+coverage:
+    coverage run --source=src -m pytest tests
+    coverage report
+    coverage html
