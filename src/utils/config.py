@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     mongo_host: str
     server_internal_port: int
     server_internal_host: str
+    server_internal_host_domain: str
+    server_internal_protocol: str
     server_external_port: int
     logging_dir_path: str
 
@@ -21,6 +23,9 @@ class Settings(BaseSettings):
         extra="ignore",
         env_file_encoding="utf-8",
     )
+
+    def make_url(self):
+        return f"{self.server_internal_protocol}://{self.server_internal_host_domain}:{str(self.server_internal_port)}"
 
 
 settings = Settings()  # type: ignore
