@@ -5,6 +5,7 @@ from locust.env import Environment
 from tests.system.load.post_events.locustfile import PostEventUser
 
 
+# Need launched service.
 @pytest.mark.load
 def test_load_test_get_near_post_event():
     # proc = subprocess.Popen(

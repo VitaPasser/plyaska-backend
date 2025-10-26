@@ -15,6 +15,8 @@ with the service.
 
 Link for open locust page: http://localhost:8089
 
+For use load test need have launched service.
+
 ## To do
 
 - [ ] Redis.
