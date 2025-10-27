@@ -1,11 +1,13 @@
 import os
 import subprocess
+from functools import cache
 from pathlib import Path
 
 import typer
 
 app = typer.Typer(help="Plyaska Backend CLI - Auto generate __init__.py files")
 
+@cache
 @app.command()
 def run_mkinit_for_all(base_dir: str):
     """To generate automatically the import of modules in this directory and submarines.

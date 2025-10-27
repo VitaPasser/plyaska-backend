@@ -1,4 +1,5 @@
 import logging
+from functools import cache
 from typing import Any, Optional, get_args, get_origin
 
 from beanie import Document, Link
@@ -94,9 +95,11 @@ def make_input_schema(
     return create_model(f"{model.__name__}{name_suffix}", **fields)
 
 
+@cache
 def make_create_schema(model: type[Document]):
     return make_input_schema(model=model, name_suffix="Create")
 
 
+@cache
 def make_update_schema(model: type[Document]):
     return make_input_schema(model=model, name_suffix="Update", update=True)

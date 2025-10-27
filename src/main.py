@@ -60,12 +60,16 @@ class Main:
 
 main = Main()
 
-if __name__ == "__main__":
+def start_server(is_reload = False):
     uvicorn.run(
         "src.main:main.app",
         host=(os.getenv("SERVER_INTERNAL_HOST") or "0.0.0.0"),
         port=(int(os.getenv("SERVER_INTERNAL_PORT") or 8000)),
-        reload=True,
+        reload=is_reload,
         workers=11,
-        timeout_keep_alive=10
+        timeout_keep_alive=10,
     )
+
+
+if __name__ == "__main__":
+    start_server(False)
