@@ -85,6 +85,34 @@ async def test_add_promotion(
 
     models_test[1] = PostEvent.model_validate(response.json())
 
+    response = await client.get(url="/post-events/?longitude=46.459308&latitude=30.752030")
+    models = [PostEvent.model_validate(post_event) for post_event in response.json()]
+    models_promotions = [
+        m.promotions
+        for i, m in enumerate(models)
+        if m.id in {mt.id for mt in models_test}
+    ]
+
+    assert not models_promotions[1] and models_promotions[0], response.json()
+
+
+@pytest.mark.asyncio
+async def test_add_promotion_and_receiving_post_event_at_that_very_point(
+    client: AsyncClient, create_post_event: ResponseDo, create_promotion: ResponseDo
+):
+    models_test = [
+        (await create_post_event.do()).model,
+        (await create_post_event.do()).model,
+    ]
+    promotion = (await create_promotion.do()).model
+    response = await client.get(
+        url=f"/post-events/{models_test[1].id}/add-promotion/{promotion.id}"
+    )
+
+    assert response.status_code == 200, response.json()
+
+    models_test[1] = PostEvent.model_validate(response.json())
+
     response = await client.get(url="/post-events/?longitude=46.459305&latitude=30.752031")
     models = [PostEvent.model_validate(post_event) for post_event in response.json()]
     models_promotions = [

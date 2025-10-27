@@ -12,9 +12,8 @@ from beanie import (
     Delete,
     Update,
 )
-from beanie.odm.actions import EventTypes
 from pydantic import Field
-from redis import Redis
+from redis.asyncio.client import Redis
 
 from src.models.promotion import Promotion
 from src.models.user import User
@@ -82,7 +81,7 @@ class PostEvent(PostEventModel, BaseDocument):
     @after_event(Update)
     async def clear_cache(self):
         r: Redis = Redis(host="localhost", port=6379, db=0)
-        near_post_events = r.geosearch(
+        near_post_events = await r.geosearch(
             self.get_settings().name,
             longitude=self.location.coordinates[0],
             latitude=self.location.coordinates[1],
@@ -93,8 +92,8 @@ class PostEvent(PostEventModel, BaseDocument):
         )
 
         if len(near_post_events) == 0:
-            r.close()
+            await r.close()
             return
 
-        r.zrem(self.get_settings().name, *near_post_events)
-        r.close()
+        await r.zrem(self.get_settings().name, *near_post_events)
+        await r.close()

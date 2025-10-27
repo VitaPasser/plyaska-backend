@@ -73,7 +73,7 @@ async def find_near_post_events(
                                             "as": "ap",
                                             "in": {
                                                 "$divide": [
-                                                    "$distance",
+                                                    {"$add": ["$distance", 1]},
                                                     "$$ap.promotion_type.power",
                                                 ]
                                             },
@@ -86,7 +86,7 @@ async def find_near_post_events(
                                 }
                             },
                             # Если активных нет — просто расстояние
-                            "$distance",
+                            {"$add": ["$distance", 1]},
                         ]
                     }
                 }
