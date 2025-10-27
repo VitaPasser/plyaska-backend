@@ -59,7 +59,7 @@ async def test_find_near(client: AsyncClient, create_post_event: ResponseDo):
         (await create_post_event.do()).model,
     ]
     for _ in range(2):
-        response = await client.get(url="/post-events/?longitude=46.459305&latitude=30.752031")
+        response = await client.get(url="/post-events/?longitude=46.4597&latitude=30.7524")
 
         assert response.status_code == 200, response.json()
 
@@ -85,7 +85,7 @@ async def test_add_promotion(
 
     models_test[1] = PostEvent.model_validate(response.json())
 
-    response = await client.get(url="/post-events/?longitude=37.6173&latitude=55.7558")
+    response = await client.get(url="/post-events/?longitude=46.459305&latitude=30.752031")
     models = [PostEvent.model_validate(post_event) for post_event in response.json()]
     models_promotions = [
         m.promotions

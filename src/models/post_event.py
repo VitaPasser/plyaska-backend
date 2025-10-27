@@ -6,8 +6,15 @@ from beanie import (
     DecimalAnnotation,
     Indexed,
     Link,
+    after_event,
+    Insert,
+    Replace,
+    Delete,
+    Update,
 )
+from beanie.odm.actions import EventTypes
 from pydantic import Field
+from redis import Redis
 
 from src.models.promotion import Promotion
 from src.models.user import User
@@ -68,4 +75,26 @@ class SquareNearPostEvents(BaseModel):
     post_events: list[PostEventNear]
 
 
-class PostEvent(PostEventModel, BaseDocument): ...
+class PostEvent(PostEventModel, BaseDocument):
+    @after_event(Insert)
+    @after_event(Replace)
+    @after_event(Delete)
+    @after_event(Update)
+    async def clear_cache(self):
+        r: Redis = Redis(host="localhost", port=6379, db=0)
+        near_post_events = r.geosearch(
+            self.get_settings().name,
+            longitude=self.location.coordinates[0],
+            latitude=self.location.coordinates[1],
+            unit="m",
+            width=250,
+            height=250,
+            sort="ASC",
+        )
+
+        if len(near_post_events) == 0:
+            r.close()
+            return
+
+        r.zrem(self.get_settings().name, *near_post_events)
+        r.close()
