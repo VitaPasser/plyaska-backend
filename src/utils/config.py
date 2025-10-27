@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     mongo_username: str
     mongo_password: str
     mongo_host: str
+    mongo_port: int
+    redis_host: str
+    redis_port: int
     server_internal_port: int
     server_internal_host: str
     server_internal_host_domain: str

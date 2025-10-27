@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from src.utils.config import settings
 from src.utils.controllers.controllers_loader import load_fastapi_routers
 from src.utils.db.mongo_db_provider import MongoDBProvider
+from src.utils.db.redis_db_provider import RedisDBProvider
 from src.utils.handlers.exception_handlers import include_exceptions
 from src.utils.logging import logging_setup
 
@@ -22,6 +23,11 @@ class Main:
             username=env.mongo_username,
             password=env.mongo_password,
             host=env.mongo_host,
+            port=env.mongo_port,
+        )
+        self._cache = RedisDBProvider(
+            host=env.redis_host,
+            port=env.redis_port,
         )
 
         @asynccontextmanager
@@ -34,8 +40,12 @@ class Main:
         self.app = include_exceptions(self.app)
         logging.info("Main initialized")
 
+    async def get_connect_cache(self):
+        return await self._cache.connect()
+
     async def setup(self):
         await self._db.connect()
+        await self._cache.connect()
         logging.info("Loading routers...")
         for router in load_fastapi_routers("src.controllers"):
             self.app.include_router(router)
@@ -44,6 +54,7 @@ class Main:
 
     async def teardown(self):
         await self._db.disconnect()
+        await self._cache.disconnect()
         print("Main down...")
 
 

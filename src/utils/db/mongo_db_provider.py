@@ -16,16 +16,17 @@ class MongoDBProvider(DBProvider):
     __is_initialized: bool = False
     __client: AsyncMongoClient | None = None
 
-    def __init__(self, database: str, username: str, password: str, host: str) -> None:
+    def __init__(self, database: str, username: str, password: str, host: str, port: int) -> None:
         self.username = username
         self.password = password
         self.host = host
+        self.port = port
         self.db = database
         self.lock = threading.Lock()
         super().__init__()
 
     def __get_url(self) -> str:
-        return f"mongodb://{self.username}:{self.password}@{self.host}:27017"
+        return f"mongodb://{self.username}:{self.password}@{self.host}:{self.port}"
 
     async def connect(self):
         if not self.__client:

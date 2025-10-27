@@ -1,44 +1,34 @@
-import pickle
 from datetime import datetime
 from typing import Tuple
 
 from beanie import PydanticObjectId, WriteRules
 from fastapi import HTTPException
-from redis.asyncio.client import Redis
 
 from src import repositories, services
 from src.exceptions.errors.repository import NotFoundedError
-from src.models.post_event import SquareNearPostEvents, PostEventNear, PostEvent
+from src.models.post_event import PostEventNear
+from src.repositories.cache.post_event import (
+    add_post_events_in_square,
+    find_near_post_events_square,
+)
 
 
 async def find_near_post_events(
     coordinates: Tuple[float, float],
 ) -> list[PostEventNear]:
     max_distance_in_meters = 11000
-    r: Redis = Redis(host="localhost", port=6379, db=0)
-    near_post_events = await r.geosearch(
-        PostEvent.get_settings().name,
-        longitude=coordinates[0],
-        latitude=coordinates[1],
-        unit="m",
-        width=250,
-        height=250,
-        sort="ASC",
-        count=1,
-    )
-    if len(near_post_events) == 1:
-        await r.close()
-        return pickle.loads(near_post_events[0]).post_events
+
+    near_post_events = await find_near_post_events_square(coordinates)
+
+    if len(near_post_events) > 0:
+        return near_post_events
 
     post_events = await repositories.post_event.find_near_post_events(
         max_distance_in_meters, coordinates
     )
-    square = SquareNearPostEvents(post_events=post_events)
-    square_bytes = pickle.dumps(square)
-    await r.geoadd(PostEvent.get_settings().name, coordinates + (square_bytes,))
-    await r.close()
+    await add_post_events_in_square(coordinates, post_events)
 
-    return square.post_events
+    return post_events
 
 
 async def find_by_id(post_event_id: PydanticObjectId):
