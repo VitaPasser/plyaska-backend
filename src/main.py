@@ -67,4 +67,5 @@ if __name__ == "__main__":
         port=(int(os.getenv("SERVER_INTERNAL_PORT") or 8000)),
         reload=True,
         workers=11,
+        timeout_keep_alive=10
     )
