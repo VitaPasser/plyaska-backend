@@ -5,7 +5,9 @@ from src.models.user import User
 from src.utils.controllers.crud_router import CRUDRouter
 from src.utils.models.create_update_dto_maker import make_create_schema
 
-crud_router = CRUDRouter(model=User, exclude=[CRUDRouter.find_all.__name__, "create"])
+crud_router = CRUDRouter(
+    model=User, exclude=["find_all", "create"], find_all_cached=False
+)
 
 router = crud_router.router
 

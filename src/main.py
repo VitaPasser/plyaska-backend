@@ -66,4 +66,5 @@ if __name__ == "__main__":
         host=(os.getenv("SERVER_INTERNAL_HOST") or "0.0.0.0"),
         port=(int(os.getenv("SERVER_INTERNAL_PORT") or 8000)),
         reload=True,
+        workers=11,
     )

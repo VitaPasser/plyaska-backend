@@ -10,7 +10,7 @@ async def find_near_post_events_square(
 ) -> list[PostEventNear]:
     r = await main.get_connect_cache()
     near_post_events: list[bytes] = await r.geosearch(
-        PostEvent.get_settings().name,
+        PostEventNear.get_like_db_name(),
         longitude=coordinates[0],
         latitude=coordinates[1],
         unit="m",
@@ -40,7 +40,7 @@ async def delete_post_events_square(post_event: PostEvent):
     r = await main.get_connect_cache()
 
     near_post_events: list[bytes] = await r.geosearch(
-        PostEvent.get_settings().name,
+        PostEventNear.get_like_db_name(),
         longitude=post_event.location.coordinates[0],
         latitude=post_event.location.coordinates[1],
         unit="m",

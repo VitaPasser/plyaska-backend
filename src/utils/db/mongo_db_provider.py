@@ -16,7 +16,9 @@ class MongoDBProvider(DBProvider):
     __is_initialized: bool = False
     __client: AsyncMongoClient | None = None
 
-    def __init__(self, database: str, username: str, password: str, host: str, port: int) -> None:
+    def __init__(
+        self, database: str, username: str, password: str, host: str, port: int
+    ) -> None:
         self.username = username
         self.password = password
         self.host = host
@@ -32,7 +34,12 @@ class MongoDBProvider(DBProvider):
         if not self.__client:
             with self.lock:
                 if not self.__client:
-                    self.__client = AsyncMongoClient(self.__get_url())
+                    self.__client = AsyncMongoClient(
+                        self.__get_url(),
+                        maxPoolSize=50,
+                        minPoolSize=5,
+                        connectTimeoutMS=2000,
+                    )
                     logging.info("Connected to MongoDB")
         if not self.__is_initialized:
             with self.lock:

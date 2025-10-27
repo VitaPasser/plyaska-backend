@@ -1,6 +1,6 @@
 from typing import List
 
-from src.models.post_event import PostEvent, PostEventNear, PostEventCreate
+from src.models.post_event import PostEvent, PostEventCreate, PostEventNear
 from src.services.post_event import (
     add_promotion as add_promotion_service,
 )
@@ -9,7 +9,12 @@ from src.services.post_event import (
 )
 from src.utils.controllers.crud_router import CRUDRouter
 
-router = CRUDRouter(model=PostEvent, create_schema=PostEventCreate, exclude=[CRUDRouter.find_all.__name__]).router
+router = CRUDRouter(
+    model=PostEvent,
+    create_schema=PostEventCreate,
+    exclude=["find_all"],
+    find_all_cached=False,
+).router
 
 
 @router.get("/", response_model=List[PostEventNear])

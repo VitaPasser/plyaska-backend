@@ -1,7 +1,9 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
 from bson import Decimal128
 from pydantic import BaseModel as PydanticBaseModel
+
+from src.utils.string import camel_to_db_name
 
 
 class BaseModel(PydanticBaseModel):
@@ -27,3 +29,7 @@ class BaseModel(PydanticBaseModel):
 
         merge(base_dict, update_dict)
         return self.model_copy(update=base_dict)
+
+    @classmethod
+    def get_like_db_name(cls) -> str:
+        return camel_to_db_name(cls.__name__)

@@ -19,7 +19,7 @@ class RedisDBProvider(DBProvider):
         if not self.__client:
             with self.lock:
                 if not self.__client:
-                    self.__client = await Redis(host=self.host, port=self.port, db=0)
+                    self.__client = await Redis(host=self.host, port=self.port, db=0, max_connections=100)
                     logging.info("Connected to Redis")
 
         return self.__client
@@ -29,5 +29,6 @@ class RedisDBProvider(DBProvider):
             logging.info("Redis was been disconnected")
             return
         await self.__client.close()
+        await self.__client.connection_pool.disconnect()
         self.__client = None
         logging.info("Redis is disconnected")
