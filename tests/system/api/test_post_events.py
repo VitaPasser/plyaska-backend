@@ -58,13 +58,14 @@ async def test_find_near(client: AsyncClient, create_post_event: ResponseDo):
         (await create_post_event.do()).model,
         (await create_post_event.do()).model,
     ]
-    response = await client.get(url="/post-events/?longitude=37.6173&latitude=55.7558")
+    for _ in range(2):
+        response = await client.get(url="/post-events/?longitude=46.459305&latitude=30.752031")
 
-    assert response.status_code == 200, response.json()
+        assert response.status_code == 200, response.json()
 
-    models = [PostEvent.model_validate(post_event) for post_event in response.json()]
+        models = [PostEvent.model_validate(post_event) for post_event in response.json()]
 
-    assert {m.id for m in models} >= {m.id for m in models_test}, response.json()
+        assert {m.id for m in models} >= {m.id for m in models_test}, response.json()
 
 
 @pytest.mark.asyncio

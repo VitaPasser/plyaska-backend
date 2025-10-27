@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from beanie import PydanticObjectId
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from src.utils.models.base_model import BaseModel
 
@@ -14,3 +14,10 @@ class DateArchive(BaseModel):
 
 class BaseModelFutureDocument(DateArchive):
     id: Optional[PydanticObjectId] = Field(default=None, alias="_id")
+
+    @model_validator(mode="before")
+    def normalize_id(cls, values):
+        if isinstance(values, dict):
+            if "id" in values and "_id" not in values:
+                values["_id"] = values["id"]
+        return values

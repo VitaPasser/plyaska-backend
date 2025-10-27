@@ -19,8 +19,10 @@ services:
       - "${SERVER_EXTERNAL_PORT}:${SERVER_INTERNAL_PORT}"
     networks:
       - mongodb-network
+      - redis-network
     depends_on:
       - mongodb
+      - redis
 
   mongodb:
     image: mongo:latest
@@ -38,11 +40,23 @@ services:
     volumes:
       - mongodb_data:/data/db
 
+  redis:
+    image: redis:8.2-alpine
+    container_name: pb_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - redis-network
+    volumes:
+      - redis_data:/data/redis
+    command: ["redis-server", "--appendonly", "yes"]
+
 volumes:
   mongodb_data:
-    name: mongodb_data
+  redis_data:
 
 networks:
   mongodb-network:
     driver: bridge
-    name: mongodb-network
+  redis-network:
+    driver: bridge

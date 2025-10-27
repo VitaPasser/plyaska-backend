@@ -18,4 +18,4 @@ SERVICE := "http://localhost:8000"
 locust:
     @curl -s {{SERVICE}} > /dev/null 2>&1 \
       || (python -m src.main > /dev/null 2>&1 & PB_SERVICE_PID=$!; echo "Service not founded. Execute"; sleep 3)
-    locust -f tests/system/load/locustfile.py --host={{SERVICE}}
+    locust -f tests/system/load/post_events/locustfile.py --host={{SERVICE}}

@@ -2,7 +2,11 @@ import datetime
 from typing import Annotated, List, Literal, Optional, Tuple
 
 import pymongo
-from beanie import DecimalAnnotation, Indexed, Link
+from beanie import (
+    DecimalAnnotation,
+    Indexed,
+    Link,
+)
 from pydantic import Field
 
 from src.models.promotion import Promotion
@@ -58,6 +62,10 @@ class PostEventModel(BaseModelFutureDocument, PostEventCore): ...
 class PostEventNear(PostEventModel):
     score: DecimalAnnotation
     active_promotions: List[PromotionDeal]
+
+
+class SquareNearPostEvents(BaseModel):
+    post_events: list[PostEventNear]
 
 
 class PostEvent(PostEventModel, BaseDocument): ...
