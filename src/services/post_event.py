@@ -5,12 +5,14 @@ from beanie import PydanticObjectId, WriteRules
 from fastapi import HTTPException
 
 from src import repositories, services
+from src.exceptions.errors.http import NotFoundedHTTPException
 from src.exceptions.errors.repository import NotFoundedError
-from src.models.post_event import PostEventNear
+from src.models.post_event import PostEventNear, PostEvent
 from src.repositories.cache.post_event import (
     add_post_events_in_square,
     find_near_post_events_square,
 )
+from src.utils.db.cache import redis_cache
 
 
 async def find_near_post_events(
@@ -31,11 +33,12 @@ async def find_near_post_events(
     return post_events
 
 
+@redis_cache(':{}', cache_who=PostEvent)
 async def find_by_id(post_event_id: PydanticObjectId):
     try:
         return await repositories.post_event.find_by_id_or_error(post_event_id)
     except NotFoundedError:
-        raise HTTPException(status_code=404, detail="Not found")
+        raise NotFoundedHTTPException()
 
 
 async def add_promotion(post_event_id: str, promotion_id: str):

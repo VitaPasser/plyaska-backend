@@ -12,7 +12,7 @@ from src.utils.controllers.crud_router import CRUDRouter
 router = CRUDRouter(
     model=PostEvent,
     create_schema=PostEventCreate,
-    exclude=["find_all"],
+    exclude=[CRUDRouter.find_all.__name__],
     find_all_cached=False,
 ).router
 

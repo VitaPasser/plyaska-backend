@@ -1,6 +1,6 @@
 import logging
-import pickle
 from enum import Enum
+from functools import partialmethod
 from http import HTTPMethod
 from typing import Type
 
@@ -11,7 +11,7 @@ from fastapi.routing import APIRoute
 
 from src.exceptions.errors.http import NotFoundedHTTPException
 from src.exceptions.errors.repository import NotFoundedError
-from src.main import main
+from src.utils.db.cache import redis_cache
 from src.utils.models.create_update_dto_maker import (
     make_create_schema,
     make_update_schema,
@@ -64,7 +64,9 @@ class CRUDRouter:
         # change type "item" parameter
         self.create = self._create(self.create_schema)
         self.update = self._update(self.update_schema)
-        self.find_all = self._find_all(find_all_cached)
+        if find_all_cached:
+            # self.find_all = redis_cache(self.find_all, cache_who=self.model, cache_by='all')
+            self.find_all = redis_cache(cache_who=self.model, cache_by="all")(self.find_all)
 
         routes_define = {
             self.create.__name__: lambda: self.router.post(
@@ -145,35 +147,13 @@ class CRUDRouter:
 
         return update
 
-    def _find_all(self, is_cached: bool):
-        async def find_all():
-            return await self.repository.find_all()
+    async def find_all(self):
+        return await self.repository.find_all()
 
-        async def find_all_cached():
-            r = await main.get_connect_cache()
-            cache_key = f"{self.model.get_settings().name}:all"
-            if value := await r.get(cache_key):
-                return pickle.loads(value)
-            value = await self.repository.find_all()
-            value_bytes = pickle.dumps(value)
-            await r.set(cache_key, value_bytes)
-            return value
-
-        if is_cached:
-            return find_all_cached
-
-        return find_all
-
+    @redis_cache("{.model}:{id}")
     async def find_by_id(self, id: PydanticObjectId):
         try:
-            r = await main.get_connect_cache()
-            cache_key = f"{self.model.get_settings().name}:{str(id)}"
-            if value := await r.get(cache_key):
-                return pickle.loads(value)
-            value = await self.repository.find_by_id_or_error(id)
-            value_bytes = pickle.dumps(value)
-            await r.set(cache_key, value_bytes)
-            return value
+            return await self.repository.find_by_id_or_error(id)
         except NotFoundedError:
             raise NotFoundedHTTPException()
 
