@@ -10,7 +10,7 @@ async def seed_user():
     await main.setup()
     fake = faker.Faker()
 
-    for _ in range(100):
+    for _ in range(10000):
         user = User(
             username=fake.user_name(), email=fake.email(), full_name=fake.name()
         )

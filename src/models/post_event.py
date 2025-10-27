@@ -79,5 +79,6 @@ class PostEvent(PostEventModel, BaseDocument):
     @after_event(Delete)
     @after_event(Update)
     async def clear_cache(self):
+        await super().clear_cache()
         from src.repositories.cache.post_event import delete_post_events_square
         await delete_post_events_square(self)

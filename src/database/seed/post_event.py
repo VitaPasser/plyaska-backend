@@ -12,7 +12,7 @@ async def seed_post_event():
     await main.setup()
     fake = faker.Faker()
 
-    for _ in range(300):
+    for _ in range(300000):
         user_dict = (await User.aggregate([{"$sample": {"size": 1}}]).to_list())[0]
         user = User.model_validate(user_dict)
         images = [
@@ -25,7 +25,7 @@ async def seed_post_event():
             author=user,
             images=images,
             location=Location(
-                coordinates=(float(fake.longitude()), float(fake.latitude()))
+                coordinates=(float(fake.longitude()), random.uniform(-85.05112878, 85.05112878))
             ),
             # promotions=...,
         )

@@ -48,7 +48,7 @@ class CRUDRouter:
         prefix: str | None = None,
         tags: list[str | Enum] | None = None,
         exclude: list[str] | None = None,
-        find_all_cached: bool = False,
+        find_all_cached: bool = True,
     ):
         if exclude is None:
             exclude = []
