@@ -19,5 +19,5 @@ For use load test need have launched service.
 
 ## To do
 
-- [ ] Redis.
-- [ ] Add load tests.
+- [x] Redis.
+- [x] Add load tests.
