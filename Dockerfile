@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:alpine
+FROM astral/uv:python3.13-bookworm-slim
 LABEL authors="vitapasser"
 
 ENV PYTHONUNBUFFERED=1

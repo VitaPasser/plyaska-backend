@@ -4,25 +4,46 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: backend
-#    restart: unless-stopped
+    #    restart: unless-stopped
     volumes:
       - ./src:/app/src
+      - ./.env:/app/.env
       - ./logs:/app/logs
     environment:
-      MONGO_USERNAME: ${MONGO_USERNAME}
-      MONGO_PASSWORD: ${MONGO_PASSWORD}
       MONGO_HOST: mongodb
-      SERVER_INTERNAL_PORT: ${SERVER_INTERNAL_PORT}
-      SERVER_INTERNAL_HOST: ${SERVER_INTERNAL_HOST}
+      REDIS_HOST: redis
       LOGGING_DIR_PATH: ${MONGO_HOST}
-    ports:
-      - "${SERVER_EXTERNAL_PORT}:${SERVER_INTERNAL_PORT}"
+    expose:
+      - "${SERVER_INTERNAL_PORT}"
     networks:
       - mongodb-network
       - redis-network
+      - haproxy-network
     depends_on:
-      - mongodb
-      - redis
+      mongodb:
+        condition: service_healthy
+        restart: true
+      redis:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: ["CMD-SHELL", "curl", "--fail", "http://localhost:8000/healtcheck/", "&&", "0", "||", "exit", "1"]
+      interval: 1s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy_lb
+    ports:
+      - "8000:80"  # проброс порта на хост
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    networks:
+      - haproxy-network
+    depends_on:
+      - web
 
   mongodb:
     image: mongo:latest
@@ -39,6 +60,12 @@ services:
       - mongodb-network
     volumes:
       - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh", "--eval", "'db.runCommand(\"ping\").ok'", "localhost:27017/test", "--quiet"]
+      interval: 1s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
 
   redis:
     image: redis:8.2-alpine
@@ -50,6 +77,12 @@ services:
     volumes:
       - redis_data:/data/redis
     command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli", "--raw", "incr", "ping"]
+      interval: 1s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
 
 volumes:
   mongodb_data:
@@ -59,4 +92,6 @@ networks:
   mongodb-network:
     driver: bridge
   redis-network:
+    driver: bridge
+  haproxy-network:
     driver: bridge
