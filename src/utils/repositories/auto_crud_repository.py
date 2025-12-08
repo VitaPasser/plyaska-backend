@@ -6,10 +6,7 @@ from src.utils.models.data_to_objects import CreateSchemaT, ModelT, UpdateSchema
 
 
 class AutoCRUDRepository(ABC):
-    def __init__(
-        self,
-        model: Type[ModelT]
-    ):
+    def __init__(self, model: Type[ModelT]):
         self.model = model
 
     def export_methods(self, module_name: str = None):
@@ -23,8 +20,8 @@ class AutoCRUDRepository(ABC):
             name: getattr(self, name)
             for name in dir(self)
             if callable(getattr(self, name))
-               and not (name.startswith("__") or name.startswith("_"))
-               and name != "export_methods"
+            and not (name.startswith("__") or name.startswith("_"))
+            and name != "export_methods"
         }
 
         for name, func in methods.items():

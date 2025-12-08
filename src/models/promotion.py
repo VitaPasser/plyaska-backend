@@ -4,10 +4,10 @@ from beanie import DecimalAnnotation
 from pydantic import Field
 
 from src.utils.models.base_document import BaseDocument
+from src.utils.models.base_model import BaseModel
 from src.utils.models.base_model_future_document import (
     BaseModelFutureDocument,
 )
-from src.utils.models.base_model import BaseModel
 
 
 class Money(BaseModel):

@@ -28,7 +28,7 @@ def generate(
     exclude: str = typer.Option(
         "",
         "--exclude",
-            "-e",
+        "-e",
         help="Comma-separated list of types to exclude. Available types: models, repositories, services, controllers, tests",
     ),
 ):

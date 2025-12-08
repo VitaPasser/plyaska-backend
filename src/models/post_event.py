@@ -4,13 +4,13 @@ from typing import Annotated, List, Literal, Optional, Tuple
 import pymongo
 from beanie import (
     DecimalAnnotation,
-    Indexed,
-    Link,
-    after_event,
-    Insert,
-    Replace,
     Delete,
+    Indexed,
+    Insert,
+    Link,
+    Replace,
     Update,
+    after_event,
 )
 from pydantic import Field
 
@@ -81,4 +81,5 @@ class PostEvent(PostEventModel, BaseDocument):
     async def clear_cache(self):
         await super().clear_cache()
         from src.repositories.cache.post_event import delete_post_events_square
+
         await delete_post_events_square(self)

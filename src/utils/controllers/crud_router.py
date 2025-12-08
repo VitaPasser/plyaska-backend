@@ -1,6 +1,5 @@
 import logging
 from enum import Enum
-from functools import partialmethod
 from http import HTTPMethod
 from typing import Type
 
@@ -66,7 +65,9 @@ class CRUDRouter:
         self.update = self._update(self.update_schema)
         if find_all_cached:
             # self.find_all = redis_cache(self.find_all, cache_who=self.model, cache_by='all')
-            self.find_all = redis_cache(cache_who=self.model, cache_by="all")(self.find_all)
+            self.find_all = redis_cache(cache_who=self.model, cache_by="all")(
+                self.find_all
+            )
 
         routes_define = {
             self.create.__name__: lambda: self.router.post(

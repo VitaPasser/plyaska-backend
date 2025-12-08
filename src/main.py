@@ -60,13 +60,14 @@ class Main:
 
 main = Main()
 
-def start_server(is_reload = False):
+
+def start_server(is_reload=False):
     uvicorn.run(
         "src.main:main.app",
         host=(os.getenv("SERVER_INTERNAL_HOST") or "0.0.0.0"),
         port=(int(os.getenv("SERVER_INTERNAL_PORT") or 8000)),
         reload=is_reload,
-        workers=11,
+        workers=(os.getenv("SERVER_COUNT_WORKERS") or 1),
         timeout_keep_alive=10,
     )
 

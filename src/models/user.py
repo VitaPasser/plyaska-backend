@@ -10,5 +10,6 @@ class UserModel(BaseModelFutureDocument):
     full_name: str
     disabled: bool = False
 
+
 class User(UserModel, BaseDocument):
     pass

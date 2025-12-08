@@ -4,18 +4,20 @@ from beanie import PydanticObjectId
 from dateutil.relativedelta import relativedelta
 from fastapi import HTTPException
 
+from src import repositories
 from src.exceptions.errors.repository import NotFoundedError
 from src.models.post_event import PromotionDeal
 from src.models.promotion import Promotion
-from src import repositories
 
 
 async def create_deal(promotion: Promotion):
     end_datetime = datetime.now() + relativedelta(seconds=promotion.duration)
     start_datetime = datetime.now()
-    promotion_deal = PromotionDeal(promotion_type=promotion,
-                                   start_datetime=start_datetime,
-                                   end_datetime=end_datetime)
+    promotion_deal = PromotionDeal(
+        promotion_type=promotion,
+        start_datetime=start_datetime,
+        end_datetime=end_datetime,
+    )
     return promotion_deal
 
 

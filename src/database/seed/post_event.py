@@ -25,7 +25,10 @@ async def seed_post_event():
             author=user,
             images=images,
             location=Location(
-                coordinates=(float(fake.longitude()), random.uniform(-85.05112878, 85.05112878))
+                coordinates=(
+                    float(fake.longitude()),
+                    random.uniform(-85.05112878, 85.05112878),
+                )
             ),
             # promotions=...,
         )
