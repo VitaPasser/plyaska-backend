@@ -20,7 +20,7 @@ class RedisDBProvider(DBProvider):
             with self.lock:
                 if not self.__client:
                     self.__client = await Redis(
-                        host=self.host, port=self.port, db=0, max_connections=100
+                        host=self.host, port=self.port, db=0
                     )
                     logging.info("Connected to Redis")
 
