@@ -33,7 +33,7 @@ async def add_post_events_in_square(
     r = await main.get_connect_cache()
     square = SquareNearPostEvents(post_events=post_events)
     square_bytes = pickle.dumps(square)
-    await r.geoadd(PostEvent.get_settings().name, coordinates + (square_bytes,))
+    await r.geoadd(PostEventNear.get_like_db_name(), coordinates + (square_bytes,))
 
 
 async def delete_post_events_square(post_event: PostEvent):
@@ -52,4 +52,4 @@ async def delete_post_events_square(post_event: PostEvent):
     if len(near_post_events) == 0:
         return
 
-    await r.zrem(post_event.get_settings().name, *near_post_events)
+    await r.zrem(PostEventNear.get_like_db_name(), *near_post_events)

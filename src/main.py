@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
+from setuptools._distutils.util import strtobool
 
 from src.utils.config import settings
 from src.utils.controllers.controllers_loader import load_fastapi_routers
@@ -61,16 +62,33 @@ class Main:
 main = Main()
 
 
-def start_server(is_reload=False):
+def start_server():
+    try:
+        port = int(os.getenv("SERVER_INTERNAL_PORT"))
+    except:
+        port = settings.server_internal_port or 8000
+
+    try:
+        reload = os.getenv("SERVER_HOT_RELOADED_ON")
+        reload = bool(strtobool(reload))
+    except (AttributeError,ValueError):
+        reload = bool(strtobool(settings.server_hot_reloaded_on or False))
+
+    try:
+        workers = int(os.getenv("SERVER_COUNT_WORKERS"))
+    except:
+        workers = settings.server_count_workers or 1
+
+    logging.debug(f"workers count: {workers}")
     uvicorn.run(
         "src.main:main.app",
-        host=(os.getenv("SERVER_INTERNAL_HOST") or "0.0.0.0"),
-        port=(int(os.getenv("SERVER_INTERNAL_PORT") or 8000)),
-        reload=is_reload,
-        workers=(os.getenv("SERVER_COUNT_WORKERS") or 1),
+        host=(os.getenv("SERVER_INTERNAL_HOST") or settings.server_internal_host or "0.0.0.0"),
+        port=port,
+        reload=reload,
+        workers=workers,
         timeout_keep_alive=10,
     )
 
 
 if __name__ == "__main__":
-    start_server(False)
+    start_server()

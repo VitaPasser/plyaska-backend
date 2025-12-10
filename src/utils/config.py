@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     server_internal_host_domain: str
     server_internal_protocol: str
     server_external_port: int
+    server_hot_reloaded_on: str
+    server_count_workers: int
     logging_dir_path: str
 
     model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(
