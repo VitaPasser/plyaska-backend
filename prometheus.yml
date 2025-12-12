@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'haproxy'
+    static_configs:
+      - targets: ['haproxy:8404']
+        labels:
+          instance: haproxy_loadbalancer
+    metrics_path: /metrics
+
+  - job_name: 'web'
+    static_configs:
+      - targets: ['web:8000']
+        labels:
+          instance: fastapi_app
+    metrics_path: /metrics

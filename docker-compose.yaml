@@ -17,7 +17,7 @@ services:
     networks:
       - mongodb-network
       - redis-network
-      - haproxy-network
+      - web-network
     depends_on:
       mongodb:
         condition: service_healthy
@@ -37,10 +37,11 @@ services:
     container_name: haproxy_lb
     ports:
       - "8000:80"  # проброс порта на хост
+      - "8404:8404"
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     networks:
-      - haproxy-network
+      - web-network
     depends_on:
       - web
 
@@ -83,14 +84,48 @@ services:
       start_period: 10s
       timeout: 5s
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    depends_on:
+      - web
+    networks:
+      - web-network
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - web-network
+    restart: always
+
 volumes:
   mongodb_data:
   redis_data:
+  prometheus_data:
+  grafana_data:
 
 networks:
   mongodb-network:
     driver: bridge
   redis-network:
     driver: bridge
-  haproxy-network:
+  web-network:
     driver: bridge

@@ -12,6 +12,7 @@ from src.utils.db.mongo_db_provider import MongoDBProvider
 from src.utils.db.redis_db_provider import RedisDBProvider
 from src.utils.handlers.exception_handlers import include_exceptions
 from src.utils.logging import logging_setup
+from src.utils.middlewares_include import add_middlewares
 
 
 class Main:
@@ -38,6 +39,7 @@ class Main:
             await self.teardown()
 
         self.app = FastAPI(lifespan=lifespan)
+        self.app = add_middlewares(self.app)
         self.app = include_exceptions(self.app)
         logging.info("Main initialized")
 
@@ -79,7 +81,6 @@ def start_server():
     except:
         workers = settings.server_count_workers or 1
 
-    logging.debug(f"workers count: {workers}")
     uvicorn.run(
         "src.main:main.app",
         host=(os.getenv("SERVER_INTERNAL_HOST") or settings.server_internal_host or "0.0.0.0"),
