@@ -26,7 +26,7 @@ services:
         condition: service_healthy
         restart: true
     healthcheck:
-      test: ["CMD-SHELL", "curl", "--fail", "http://localhost:8000/healthcheck/", "&&", "0", "||", "exit", "1"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck/"]
       interval: 1s
       retries: 5
       start_period: 10s
