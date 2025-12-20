@@ -1,6 +1,10 @@
 FROM astral/uv:python3.13-bookworm-slim
 LABEL authors="vitapasser"
 
+RUN apt -y update && apt install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
+
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
