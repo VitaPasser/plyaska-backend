@@ -15,3 +15,10 @@ scrape_configs:
         labels:
           instance: fastapi_app
     metrics_path: /metrics
+
+  - job_name: 'mongodb'
+    static_configs:
+      - targets: ['mongodb-exporter:9216']
+        labels:
+          instance: mongodb_exporter
+    metrics_path: /metrics

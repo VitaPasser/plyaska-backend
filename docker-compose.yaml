@@ -26,7 +26,7 @@ services:
         condition: service_healthy
         restart: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck/"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/healthcheck/" ]
       interval: 1s
       retries: 5
       start_period: 10s
@@ -37,7 +37,8 @@ services:
     container_name: haproxy_lb
     ports:
       - "8000:80"  # проброс порта на хост
-      - "8404:8404"
+    expose:
+      - "8404"
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     networks:
@@ -59,13 +60,30 @@ services:
     networks:
       - mongodb-network
     volumes:
+      - ./database/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongodb_data:/data/db
     healthcheck:
-      test: ["CMD-SHELL", "mongosh", "--eval", "'db.runCommand(\"ping\").ok'", "localhost:27017/test", "--quiet"]
+      test: [ "CMD-SHELL", "mongosh", "--eval", "'db.runCommand(\"ping\").ok'", "localhost:27017/test", "--quiet" ]
       interval: 1s
       retries: 5
       start_period: 10s
       timeout: 5s
+
+  mongodb-exporter:
+    image: bitnami/mongodb-exporter:latest
+    container_name: mongodb-exporter
+    restart: unless-stopped
+    ports:
+      - "9216:9216"
+    environment:
+      MONGODB_USER: ${MONGO_USERNAME}
+      MONGODB_PASSWORD: ${MONGO_PASSWORD}
+      MONGODB_URI: "mongodb://mongodb:27017"
+    command: ['--log.level=debug', '--collect-all', '--discovering-mode', '--compatible-mode']
+    networks:
+      - mongodb-network
+    depends_on:
+      - mongodb
 
   redis:
     image: redis:8.2-alpine
@@ -76,9 +94,9 @@ services:
       - redis-network
     volumes:
       - redis_data:/data/redis
-    command: ["redis-server", "--appendonly", "yes"]
+    command: [ "redis-server", "--appendonly", "yes" ]
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli", "--raw", "incr", "ping"]
+      test: [ "CMD-SHELL", "redis-cli", "--raw", "incr", "ping" ]
       interval: 1s
       retries: 5
       start_period: 10s
@@ -96,8 +114,11 @@ services:
       - "9090:9090"
     depends_on:
       - web
+      - haproxy
+      - mongodb-exporter
     networks:
       - web-network
+      - mongodb-network
     restart: always
 
   grafana:
