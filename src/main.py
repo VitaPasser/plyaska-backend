@@ -79,7 +79,6 @@ def start_server():
     except:
         workers = settings.server_count_workers or 1
 
-    logging.debug(f"workers count: {workers}")
     uvicorn.run(
         "src.main:main.app",
         host=(os.getenv("SERVER_INTERNAL_HOST") or settings.server_internal_host or "0.0.0.0"),
